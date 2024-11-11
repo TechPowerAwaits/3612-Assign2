@@ -25,8 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
    * Purpose: Makes the home page visible.
    */
   function showHome() {
-    const home = document.querySelector("#home");
-    home.style.display = "flex";
+    document.querySelector("#home").dataset.visible = 1;
   }
 
   handleLinkClasses();
