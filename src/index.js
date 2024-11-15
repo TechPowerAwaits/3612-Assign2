@@ -22,24 +22,27 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /*
-   * Purpose: Makes the element with the given id visible whilst hiding siblings.
+   * Purpose: Hides the elements selected by the given query.
+   *
+   * Details: Only elements that have CSS defined to hide themselves when
+   * data-visible is 0 will work with this function.
+   */
+  function hide(query) {
+    document
+      .querySelectorAll(query)
+      .forEach((elm) => (elm.dataset.visible = 0));
+  }
+
+  /*
+   * Purpose: Makes the elements selected by the given query visible.
    *
    * Details: Only elements that have CSS defined to display themselves when
    * data-visible is 1 will work with this function.
-   *
-   * id should be the id of the target element as written within the HTML.
    */
-  function show(id) {
-    const target = document.querySelector(`#${id}`);
-    if (target) {
-      const parent = target.parentElement;
-      if (parent) {
-        for (const child of parent.children) {
-          child.dataset.visible = 0;
-        }
-      }
-      target.dataset.visible = 1;
-    }
+  function show(query) {
+    document
+      .querySelectorAll(query)
+      .forEach((elm) => (elm.dataset.visible = 1));
   }
 
   const selSeason = document.querySelector("#selSeason");
@@ -47,11 +50,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const seasonVal = selSeason.value;
     if (seasonVal) {
       alert(seasonVal);
-      show("browse");
+      hide("main > *");
+      show("#browse");
     }
     selSeason.value = "";
   });
 
   handleLinkClasses();
-  show("home");
+  show("#home");
 });
