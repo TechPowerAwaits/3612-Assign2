@@ -28,6 +28,15 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector("#home").dataset.visible = 1;
   }
 
+  const selSeason = document.querySelector("#selSeason");
+  selSeason.addEventListener("change", () => {
+    const seasonVal = selSeason.value;
+    if (seasonVal) {
+      alert(seasonVal);
+    }
+    selSeason.value = "";
+  });
+
   handleLinkClasses();
   showHome();
 });
