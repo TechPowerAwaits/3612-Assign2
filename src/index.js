@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function hide(query) {
     document
       .querySelectorAll(query)
-      .forEach((elm) => (elm.dataset.visible = 0));
+      .forEach((elm) => (elm.dataset.visible = "0"));
   }
 
   /*
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function show(query) {
     document
       .querySelectorAll(query)
-      .forEach((elm) => (elm.dataset.visible = 1));
+      .forEach((elm) => (elm.dataset.visible = "1"));
   }
 
   const selSeason = document.querySelector("#selSeason");
@@ -56,6 +56,12 @@ document.addEventListener("DOMContentLoaded", () => {
     selSeason.value = "";
   });
 
+  show("#loading");
   handleLinkClasses();
-  show("#home");
+  setTimeout(() => {
+    hide("#loading");
+    show("#home");
+  }, 3000);
+  //hide("#loading");
+  //show("#home");
 });
