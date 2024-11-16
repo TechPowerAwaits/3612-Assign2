@@ -49,9 +49,29 @@ document.addEventListener("DOMContentLoaded", () => {
   selSeason.addEventListener("change", () => {
     const seasonVal = selSeason.value;
     if (seasonVal) {
-      alert(seasonVal);
-      hide("main > *");
-      show("#browse");
+      const apiDomain = "https://www.randyconnolly.com/funwebdev/3rd/api/f1";
+      const racesCall = `races.php?season={seasonVal}`;
+      fetch(`${apiDomain}/${racesCall}`)
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error(
+              `Request rejected. Status Code ${response.status}.`,
+            );
+          }
+        })
+        .then((racesData) => {
+          if (racesData.error) {
+            throw new Error(racesData.error.message);
+          }
+          console.table(racesData);
+          hide("main > *");
+          show("#browse");
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
     selSeason.value = "";
   });
