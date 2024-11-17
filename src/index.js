@@ -51,6 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
       insert: function (title, msg = "", timeout = this.default_timeout) {
         const h2 = document.createElement("h2");
         h2.textContent = title;
+        h2.classList.add("font-semibold");
 
         const p = document.createElement("p");
         p.textContent = msg;
@@ -60,13 +61,17 @@ document.addEventListener("DOMContentLoaded", () => {
         li.appendChild(p);
         li.classList.add("bg-lime-400");
         li.classList.add("p-2");
-        li.classList.add("rounded-sm");
+        li.classList.add("rounded-lg");
+        li.classList.add("text-center");
+        li.classList.add("break-words");
+        li.classList.add("text-pretty");
+        li.classList.add("w-48");
         li.classList.add("relative");
 
         notifications.appendChild(li);
 
         setTimeout(() => {
-          if (this._node.contains(li)) this._node.removeChild(li);
+          if (this._node.contains(li)) li.classList.add("hidden");
         }, timeout);
       },
 
@@ -177,7 +182,14 @@ document.addEventListener("DOMContentLoaded", () => {
     hide("#loading");
     show("#home");
     F1.notification.insert("test", "This is a test.");
-    F1.notification.insert("second test", "This test comes later.");
+    F1.notification.insert(
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "KOOOOOOL!!!",
+    );
+    setTimeout(
+      () => F1.notification.insert("second test", "This test comes later."),
+      1000,
+    );
   }, 3000);
   //hide("#loading");
   //show("#home");
