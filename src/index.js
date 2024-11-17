@@ -21,6 +21,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  const notifications = document.querySelector("#notifications");
+  function addNotification(title, msg = "", timeout = 3000) {
+    const h2 = document.createElement("h2");
+    h2.textContent = title;
+
+    const p = document.createElement("p");
+    p.textContent = msg;
+
+    const li = document.createElement("li");
+    li.appendChild(h2);
+    li.appendChild(p);
+
+    notifications.insertBefore(li, notifications.firstElementChild);
+
+    setTimeout(() => notifications.removeChild(li), timeout);
+  }
+
   /*
    * Purpose: Hides the elements selected by the given query.
    *
@@ -69,11 +86,9 @@ document.addEventListener("DOMContentLoaded", () => {
           hide("main > *");
           show("#browse");
         })
-        .catch((error) => {
-          console.error(error);
-        });
+        .catch((error) => addNotification("Error", error.message))
+        .finally(() => (selSeason.value = ""));
     }
-    selSeason.value = "";
   });
 
   show("#loading");
