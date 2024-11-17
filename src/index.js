@@ -58,8 +58,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const li = document.createElement("li");
         li.appendChild(h2);
         li.appendChild(p);
+        li.classList.add("bg-lime-400");
+        li.classList.add("p-2");
+        li.classList.add("rounded-sm");
+        li.classList.add("relative");
 
-        notifications.insertBefore(li, this._node.firstElementChild);
+        notifications.appendChild(li);
 
         setTimeout(() => {
           if (this._node.contains(li)) this._node.removeChild(li);
@@ -172,6 +176,8 @@ document.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => {
     hide("#loading");
     show("#home");
+    F1.notification.insert("test", "This is a test.");
+    F1.notification.insert("second test", "This test comes later.");
   }, 3000);
   //hide("#loading");
   //show("#home");
