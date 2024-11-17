@@ -61,8 +61,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
         notifications.insertBefore(li, this._node.firstElementChild);
 
-        setTimeout(() => this._node.removeChild(li), timeout);
+        setTimeout(() => {
+          if (this._node.contains(li)) this._node.removeChild(li);
+        }, timeout);
       },
+    },
+
+    /*
+     * Purpose: To clear all the notifications on the screen.
+     */
+    clearAll: function () {
+      this._node.innerHTML = "";
     },
   };
 
