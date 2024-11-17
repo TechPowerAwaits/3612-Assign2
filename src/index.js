@@ -21,22 +21,50 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  const notifications = document.querySelector("#notifications");
-  function addNotification(title, msg = "", timeout = 3000) {
-    const h2 = document.createElement("h2");
-    h2.textContent = title;
+  /*
+   * Purpose: An object containing all functionality and data specific to this
+   * website.
+   */
+  const F1 = {
+    /*
+     * Purpose: Contains the functionality associated with displaying
+     * notifications.
+     *
+     * Details: Notifications appear for a set amount of time (default 3000ms)
+     * and are then automagically removed from the screen.
+     */
+    notification: {
+      /*
+       * Purpose: To keep a reference to the notifications node.
+       */
+      _node: document.querySelector("#notifications"),
 
-    const p = document.createElement("p");
-    p.textContent = msg;
+      /*
+       * Purpose: To provide an adjustable default length of time notifications
+       * stay on screen.
+       */
+      default_timeout: 3000,
 
-    const li = document.createElement("li");
-    li.appendChild(h2);
-    li.appendChild(p);
+      /*
+       * Purpose: Adds a notification on screen with the given information.
+       */
+      insert: function (title, msg = "", timeout = this.default_timeout) {
+        const h2 = document.createElement("h2");
+        h2.textContent = title;
 
-    notifications.insertBefore(li, notifications.firstElementChild);
+        const p = document.createElement("p");
+        p.textContent = msg;
 
-    setTimeout(() => notifications.removeChild(li), timeout);
-  }
+        const li = document.createElement("li");
+        li.appendChild(h2);
+        li.appendChild(p);
+
+        notifications.insertBefore(li, this._node.firstElementChild);
+
+        setTimeout(() => this._node.removeChild(li), timeout);
+      },
+    },
+  };
 
   /*
    * Purpose: Hides the elements selected by the given query.
@@ -86,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
           hide("main > *");
           show("#browse");
         })
-        .catch((error) => addNotification("Error", error.message))
+        .catch((error) => F1.notification.insert("Error", error.message))
         .finally(() => (selSeason.value = ""));
     }
   });
