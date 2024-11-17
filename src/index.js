@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const seasonVal = selSeason.value;
     if (seasonVal) {
       const apiDomain = "https://www.randyconnolly.com/funwebdev/3rd/api/f1";
-      const racesCall = `races.php?season={seasonVal}`;
+      const racesCall = `races.php?season=${seasonVal}`;
       fetch(`${apiDomain}/${racesCall}`)
         .then((response) => {
           if (response.ok) {
