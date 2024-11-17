@@ -65,13 +65,64 @@ document.addEventListener("DOMContentLoaded", () => {
           if (this._node.contains(li)) this._node.removeChild(li);
         }, timeout);
       },
+
+      /*
+       * Purpose: To clear all the notifications on the screen.
+       */
+      clearAll: function () {
+        this._node.innerHTML = "";
+      },
     },
 
-    /*
-     * Purpose: To clear all the notifications on the screen.
-     */
-    clearAll: function () {
-      this._node.innerHTML = "";
+    data: {
+      _cache: {},
+
+      _get_cached_data: function (dataID) {
+        let data = this._cache[dataID];
+
+        if (!data) {
+          data = localStorage.getItem(dataID);
+        }
+
+        return data;
+      },
+
+      default_domain: "https://www.randyconnolly.com/funwebdev/3rd/api/f1",
+
+      handle: function (
+        callName,
+        queryStr,
+        onSuccess = () => {},
+        onFinish = () => {},
+        domain = this.default_domain,
+      ) {
+        let data = this._get_cached_data(callName);
+
+        if (!data) {
+          fetch(`${domain}/${callName}.php${queryStr}`)
+            .then((response) => {
+              if (response.ok) {
+                return response.json();
+              } else {
+                throw new Error(
+                  `Request rejected. Status Code ${response.status}.`,
+                );
+              }
+            })
+            .then((data) => {
+              if (data.error) {
+                throw new Error(data.error.message);
+              }
+
+              localStorage.setItem(callName, data);
+              onSuccess(data);
+            })
+            .catch((error) => F1.notification.insert("Error", error.message))
+            .finally(onFinish);
+        } else {
+          onSuccess(data);
+        }
+      },
     },
   };
 
@@ -103,28 +154,16 @@ document.addEventListener("DOMContentLoaded", () => {
   selSeason.addEventListener("change", () => {
     const seasonVal = selSeason.value;
     if (seasonVal) {
-      const apiDomain = "https://www.randyconnolly.com/funwebdev/3rd/api/f1";
-      const racesCall = `races.php?season=${seasonVal}`;
-      fetch(`${apiDomain}/${racesCall}`)
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
-          } else {
-            throw new Error(
-              `Request rejected. Status Code ${response.status}.`,
-            );
-          }
-        })
-        .then((racesData) => {
-          if (racesData.error) {
-            throw new Error(racesData.error.message);
-          }
-          console.table(racesData);
+      F1.data.handle(
+        "races",
+        `?season=${seasonVal}`,
+        (data) => {
+          console.table(data);
           hide("main > *");
           show("#browse");
-        })
-        .catch((error) => F1.notification.insert("Error", error.message))
-        .finally(() => (selSeason.value = ""));
+        },
+        () => (selSeason.value = ""),
+      );
     }
   });
 
