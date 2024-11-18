@@ -159,6 +159,56 @@ document.addEventListener("DOMContentLoaded", () => {
       .forEach((elm) => (elm.dataset.visible = "1"));
   }
 
+  /*
+   * Purpose: Makes the elements selected by the given query look disabled.
+   *
+   * Details: Only elements that have CSS defined to disable themselves when
+   * data-disabled is 1 will work with this function.
+   */
+  function disable(query) {
+    document
+      .querySelectorAll(query)
+      .forEach((elm) => (elm.dataset.disabled = "1"));
+  }
+
+  /*
+   * Purpose: Makes the elements selected by the given query look enabled.
+   *
+   * Details: Only elements that have CSS defined to enable themselves when
+   * data-disabled is 0 will work with this function.
+   */
+  function enable(query) {
+    document
+      .querySelectorAll(query)
+      .forEach((elm) => (elm.dataset.disabled = "0"));
+  }
+
+  /*
+   * Purpose: Returns if the given element is disabled.
+   */
+  function is_disabled(elm) {
+    return elm.dataset.disabled == "1";
+  }
+
+  const logo = document.querySelector("#logo");
+  logo.addEventListener("click", () => {
+    if (!is_disabled(logo)) {
+      disable(".disable-on-load");
+      hide("main > *");
+      F1.notification.clearAll();
+      show("#mainLoading");
+
+      setTimeout(
+        () => {
+          hide("#mainLoading");
+          show("#home");
+          enable(".disable-on-load");
+        },
+        3000 - Math.random() * 2,
+      );
+    }
+  });
+
   const selSeason = document.querySelector("#selSeason");
   selSeason.addEventListener("change", () => {
     const seasonVal = selSeason.value;
@@ -176,11 +226,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  show("#loading");
+  disable(".disable-on-load");
+  show("#mainLoading");
   handleLinkClasses();
   setTimeout(() => {
-    hide("#loading");
+    hide("#mainLoading");
     show("#home");
+    enable(".disable-on-load");
     F1.notification.insert("test", "This is a test.");
     F1.notification.insert(
       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",

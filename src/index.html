@@ -8,8 +8,16 @@
     <script src="index.js"></script>
   </head>
   <body class="bg-black text-white">
-    <header class="flex w-full items-center justify-between bg-orange-500">
-      <img src="Images/logo-mobile.png" alt="Logo" title="Go to main page" />
+    <header
+      class="disable-on-load flex w-full items-center justify-between bg-orange-500 data-[disabled=1]:bg-slate-700"
+    >
+      <img
+        class="disable-on-load cursor-pointer data-[disabled=1]:cursor-not-allowed data-[disabled=1]:grayscale"
+        id="logo"
+        src="Images/logo-mobile.png"
+        alt="Logo"
+        title="Go to main page"
+      />
       <h1 class="text-2xl text-blue-600">F1 Season Viewer</h1>
       <menu></menu>
     </header>
@@ -24,8 +32,8 @@
       id="notifications"
     ></ol>
     <figure
-      class="hidden h-dvh flex-col items-center justify-center data-[visible=1]:flex data-[visible=1]:cursor-progress"
-      id="loading"
+      class="loading hidden h-dvh flex-col items-center justify-center data-[visible=1]:flex data-[visible=1]:cursor-progress"
+      id="mainLoading"
     >
       <img src="Images/loading.gif" />
       <figcaption class="text-3xl font-black uppercase tracking-widest">
