@@ -98,38 +98,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
       default_domain: "https://www.randyconnolly.com/funwebdev/3rd/api/f1",
 
-      handle: function (
-        callName,
-        queryStr,
-        onSuccess = () => {},
-        onFinish = () => {},
-        domain = this.default_domain,
-      ) {
-        let data = this._get_cached_data(callName);
-
-        if (!data) {
-          fetch(`${domain}/${callName}.php${queryStr}`)
-            .then((response) => {
-              if (response.ok) {
-                return response.json();
-              } else {
-                throw new Error(
-                  `Request rejected. Status Code ${response.status}.`,
-                );
-              }
-            })
-            .then((data) => {
-              if (data.error) {
-                throw new Error(data.error.message);
-              }
-
-              localStorage.setItem(callName, data);
-              onSuccess(data);
-            })
-            .catch((error) => F1.notification.insert("Error", error.message))
-            .finally(onFinish);
+      checkedFetch: async function (url) {
+        const response = await fetch(url);
+        if (response.ok) {
+          return response.json();
         } else {
-          onSuccess(data);
+          throw new Error(`Request rejected. Status Code ${response.status}.`);
         }
       },
     },
@@ -201,18 +175,52 @@ document.addEventListener("DOMContentLoaded", () => {
   selSeason.addEventListener("change", () => {
     const seasonVal = selSeason.value;
     if (seasonVal) {
-      F1.data.handle(
-        "races",
-        `?season=${seasonVal}`,
-        (data) => {
-          console.table(data);
-          hide("main > *");
-          show("#browse");
-        },
-        () => (selSeason.value = ""),
+      handleRaces(seasonVal);
+    } else {
+      F1.notification.insert(
+        "Error",
+        `Invalid season "${seasonVal}" selected.`,
       );
     }
   });
+
+  async function handleRaces(year, domain = F1.data.default_domain) {
+    disable(".disable-on-load");
+    hide("main > *");
+    F1.notification.clearAll();
+    show("#mainLoading");
+
+    const dataID = `races${year}`;
+    let data = localStorage.getItem(dataID);
+
+    if (!data) {
+      try {
+        data = await F1.data.checkedFetch(`${domain}/races.php?season=${year}`);
+
+        if (data.error) {
+          throw new Error(data.error.message);
+        }
+
+        localStorage.setItem(dataID, JSON.stringify(data));
+      } catch (error) {
+        F1.notification.insert("Error", error.message);
+        data = null;
+      }
+    } else {
+      data = JSON.parse(data);
+    }
+
+    if (data) {
+      hide("#mainLoading");
+      show("#browse");
+      enable(".disable-on-load");
+
+      console.table(data);
+      console.log(data[0].id);
+    }
+
+    selSeason.value = "";
+  }
 
   /*
    * Purpose: To switch the view to Home.
@@ -229,7 +237,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function switchToHome() {
     const maxTimeToLoad = 3000;
     const timeToLoad = maxTimeToLoad - Math.random() * 2000;
-    console.log(timeToLoad);
 
     disable(".disable-on-load");
     hide("main > *");
