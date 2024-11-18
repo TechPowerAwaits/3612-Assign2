@@ -193,19 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const logo = document.querySelector("#logo");
   logo.addEventListener("click", () => {
     if (!is_disabled(logo)) {
-      disable(".disable-on-load");
-      hide("main > *");
-      F1.notification.clearAll();
-      show("#mainLoading");
-
-      setTimeout(
-        () => {
-          hide("#mainLoading");
-          show("#home");
-          enable(".disable-on-load");
-        },
-        3000 - Math.random() * 2,
-      );
+      switchToHome();
     }
   });
 
@@ -226,23 +214,35 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  disable(".disable-on-load");
-  show("#mainLoading");
+  /*
+   * Purpose: To switch the view to Home.
+   *
+   * Details: It will takes a minimum of about a second and a maximum of three
+   * seconds to finish loading. It doesn't have anything to load; it simply
+   * displays the loading screen to make the process of switching views seem
+   * more impressive.
+   *
+   * Known Issues: It does not cache any element references; however, it is
+   * assumed that this won't be a big performance issue as it isn't often that
+   * the user can switch to Home.
+   */
+  function switchToHome() {
+    const maxTimeToLoad = 3000;
+    const timeToLoad = maxTimeToLoad - Math.random() * 2000;
+    console.log(timeToLoad);
+
+    disable(".disable-on-load");
+    hide("main > *");
+    F1.notification.clearAll();
+    show("#mainLoading");
+
+    setTimeout(() => {
+      hide("#mainLoading");
+      show("#home");
+      enable(".disable-on-load");
+    }, timeToLoad);
+  }
+
   handleLinkClasses();
-  setTimeout(() => {
-    hide("#mainLoading");
-    show("#home");
-    enable(".disable-on-load");
-    F1.notification.insert("test", "This is a test.");
-    F1.notification.insert(
-      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-      "KOOOOOOL!!!",
-    );
-    setTimeout(
-      () => F1.notification.insert("second test", "This test comes later."),
-      1000,
-    );
-  }, 3000);
-  //hide("#loading");
-  //show("#home");
+  switchToHome();
 });
