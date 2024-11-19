@@ -21,7 +21,7 @@
     >
     <main>
       <article
-        class="hidden justify-between p-1 data-[visible=1]:flex"
+        class="hidden min-h-dvh justify-between gap-x-12 p-1 data-[visible=1]:flex"
         id="home"
       >
         <section class="space-y-2">
@@ -84,14 +84,6 @@
                       href="https://tenor.com/bdhwU.gif"
                       ><strong>Driving cat GIF</strong> came from Tenor and was
                       uploaded by rabidewok89.</a
-                    >
-                  </li>
-                  <li class="has-[a:hover]:before:content-['\25C8']">
-                    <a
-                      class="text-green-500 visited:text-red-500 hover:text-yellow-300"
-                      href="https://tenor.com/view/treyreloaded-dog-driving-yawn-tired-gif-7304776281762242109"
-                      ><strong>Driving dog GIF</strong> came from Tenor and was
-                      uploaded by treyreloaded.</a
                     >
                   </li>
                   <li class="has-[a:hover]:before:content-['\25C8']">
@@ -179,22 +171,29 @@
           </details>
         </section>
         <aside>
-          <a href="https://tenor.com/bdhwU.gif">
-            <img
-              src="Images/cat-driving-tenor.gif"
-              alt="Cat driving a car"
-              title="LOL 🙃"
-            />
-          </a>
-          <a
-            href="https://tenor.com/view/treyreloaded-dog-driving-yawn-tired-gif-7304776281762242109"
-          >
-            <img
-              src="Images/dog-driving-tenor.gif"
-              alt="Dog driving a car"
-              title="Doggo goes fast! 🐶"
-            />
-          </a>
+          <div class="center-box hidden h-full flex-col justify-center md:flex">
+            <h2
+              class="text-pretty text-center text-xl font-semibold capitalize tracking-wide"
+            >
+              Make Kitty Happy! 😃
+            </h2>
+            <a href="https://tenor.com/bdhwU.gif">
+              <figure>
+                <img
+                  src="Images/cat-driving-tenor.gif"
+                  width="498px"
+                  height="325px"
+                  alt="Cat driving a car"
+                  title="LOL 🙃"
+                />
+                <figcaption
+                  class="text-pretty text-center text-xl font-medium tracking-wide"
+                >
+                  Kitty wants you to select a season!
+                </figcaption>
+              </figure>
+            </a>
+          </div>
         </aside>
       </article>
       <article class="hidden" id="browse"></article>
