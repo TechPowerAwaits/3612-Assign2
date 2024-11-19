@@ -40,6 +40,11 @@ document.addEventListener("DOMContentLoaded", () => {
       _node: document.querySelector("#notifications"),
 
       /*
+       * Purpose: To keep a reference to the notification template.
+       */
+      _notificationTemplate: document.querySelector("#notificationTemplate"),
+
+      /*
        * Purpose: To provide an adjustable default length of time notifications
        * stay on screen.
        */
@@ -49,29 +54,23 @@ document.addEventListener("DOMContentLoaded", () => {
        * Purpose: Adds a notification on screen with the given information.
        */
       insert: function (title, msg = "", timeout = this.default_timeout) {
-        const h2 = document.createElement("h2");
-        h2.textContent = title;
-        h2.classList.add("font-semibold");
+        const notification = this._notificationTemplate.content.cloneNode(true);
 
-        const p = document.createElement("p");
-        p.textContent = msg;
+        const notificationTitle =
+          notification.querySelector("#notificationTitle");
+        notificationTitle.id = "";
+        notificationTitle.textContent = title;
 
-        const li = document.createElement("li");
-        li.appendChild(h2);
-        li.appendChild(p);
-        li.classList.add("bg-lime-400");
-        li.classList.add("p-2");
-        li.classList.add("rounded-lg");
-        li.classList.add("text-center");
-        li.classList.add("break-words");
-        li.classList.add("text-pretty");
-        li.classList.add("w-48");
-        li.classList.add("relative");
+        const notificationBody =
+          notification.querySelector("#notificationBody");
+        notificationBody.id = "";
+        notificationBody.textContent = msg;
 
-        notifications.appendChild(li);
+        this._node.appendChild(notification);
 
         setTimeout(() => {
-          if (this._node.contains(li)) li.classList.add("hidden");
+          if (this._node.contains(notificationTitle))
+            notificationTitle.parentElement.classList.add("hidden");
         }, timeout);
       },
 
