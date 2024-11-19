@@ -200,8 +200,10 @@ document.addEventListener("DOMContentLoaded", () => {
           throw new Error(data.error.message);
         }
 
+        data.sort((r1, r2) => r1.round - r2.round);
         localStorage.setItem(dataID, JSON.stringify(data));
       } catch (error) {
+        switchToHome();
         F1.notification.insert("Error", error.message);
         data = null;
       }
