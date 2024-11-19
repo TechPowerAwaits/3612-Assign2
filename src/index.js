@@ -81,6 +81,14 @@ document.addEventListener("DOMContentLoaded", () => {
     data: {
       _cache: {},
 
+      _racesTemplate: document.querySelector("#racesTemplate"),
+
+      _racesResultsBtnTemplate: document.querySelector(
+        "#racesResultsBtnTemplate",
+      ),
+
+      _racesSection: document.querySelector("#races"),
+
       _get_cached_data: function (dataID) {
         let data = this._cache[dataID];
 
@@ -208,15 +216,43 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (data) {
+      populateRaces(selSeason.value, data);
       hide("#mainLoading");
       show("#browse");
       enable(".disable-on-load");
-
-      console.table(data);
-      console.log(data[0].id);
     }
 
     selSeason.value = "";
+  }
+
+  function populateRaces(year, racesData) {
+    const racesTable = F1.data._racesTemplate.content.cloneNode(true);
+
+    const h2 = racesTable.querySelector("h2");
+    const h2Text = h2.textContent.replace("[year]", year);
+    h2.textContent = h2Text;
+
+    const tableBody = racesTable.querySelector("tbody");
+
+    racesData.forEach((race) => {
+      const rnd = document.createElement("td");
+      rnd.textContent = race.round;
+
+      const name = document.createElement("td");
+      name.textContent = race.name;
+
+      const btn = F1.data._racesResultsBtnTemplate.content.cloneNode(true);
+
+      const tr = document.createElement("tr");
+      tr.appendChild(rnd);
+      tr.appendChild(name);
+      tr.appendChild(btn);
+
+      tableBody.appendChild(tr);
+    });
+
+    F1.data._racesSection.innerHTML = "";
+    F1.data._racesSection.appendChild(racesTable);
   }
 
   /*
