@@ -78,12 +78,72 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     },
 
+    /*
+     * Purpose: Handles anything affecting the visibility and styling of an
+     * element.
+     */
+    visible: {
+      /*
+       * Purpose: Hides the elements selected by the given query.
+       *
+       * Details: Only elements that have CSS defined to hide themselves when
+       * data-visible is 0 will work with this function.
+       */
+      hide: function (query) {
+        document
+          .querySelectorAll(query)
+          .forEach((elm) => (elm.dataset.visible = "0"));
+      },
+
+      /*
+       * Purpose: Makes the elements selected by the given query visible.
+       *
+       * Details: Only elements that have CSS defined to display themselves when
+       * data-visible is 1 will work with this function.
+       */
+      show: function (query) {
+        document
+          .querySelectorAll(query)
+          .forEach((elm) => (elm.dataset.visible = "1"));
+      },
+
+      /*
+       * Purpose: To switch the view to Home.
+       *
+       * Details: It will takes a minimum of about a second and a maximum of three
+       * seconds to finish loading. It doesn't have anything to load; it simply
+       * displays the loading screen to make the process of switching views seem
+       * more impressive.
+       *
+       * Known Issues: It does not cache any element references; however, it is
+       * assumed that this won't be a big performance issue as it isn't often that
+       * the user can switch to Home.
+       */
+      switchToHome: function () {
+        const maxTimeToLoad = 3000;
+        const timeToLoad = maxTimeToLoad - Math.random() * 2000;
+
+        disable(".disable-on-load");
+        this.hide("main > *");
+        F1.notification.clearAll();
+        this.show("#mainLoading");
+
+        setTimeout(() => {
+          this.hide("#mainLoading");
+          this.show("#home");
+          enable(".disable-on-load");
+        }, timeToLoad);
+      },
+    },
+
     data: {
       _racesTemplate: document.querySelector("#racesTemplate"),
 
       _racesResultsBtnTemplate: document.querySelector(
         "#racesResultsBtnTemplate",
       ),
+
+      _racesSection: document.querySelector("#races"),
 
       default_domain: "https://www.randyconnolly.com/funwebdev/3rd/api/f1",
 
@@ -97,30 +157,6 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     },
   };
-
-  /*
-   * Purpose: Hides the elements selected by the given query.
-   *
-   * Details: Only elements that have CSS defined to hide themselves when
-   * data-visible is 0 will work with this function.
-   */
-  function hide(query) {
-    document
-      .querySelectorAll(query)
-      .forEach((elm) => (elm.dataset.visible = "0"));
-  }
-
-  /*
-   * Purpose: Makes the elements selected by the given query visible.
-   *
-   * Details: Only elements that have CSS defined to display themselves when
-   * data-visible is 1 will work with this function.
-   */
-  function show(query) {
-    document
-      .querySelectorAll(query)
-      .forEach((elm) => (elm.dataset.visible = "1"));
-  }
 
   /*
    * Purpose: Makes the elements selected by the given query look disabled.
@@ -156,7 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const logo = document.querySelector("#logo");
   logo.addEventListener("click", () => {
     if (!is_disabled(logo)) {
-      switchToHome();
+      F1.visible.switchToHome();
     }
   });
 
@@ -175,9 +211,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function handleRaces(year, domain = F1.data.default_domain) {
     disable(".disable-on-load");
-    hide("main > *");
+    F1.visible.hide("main > *");
     F1.notification.clearAll();
-    show("#mainLoading");
+    F1.visible.show("#mainLoading");
 
     const dataID = `races${year}`;
     let data = localStorage.getItem(dataID);
@@ -193,7 +229,7 @@ document.addEventListener("DOMContentLoaded", () => {
         data.sort((r1, r2) => r1.round - r2.round);
         localStorage.setItem(dataID, JSON.stringify(data));
       } catch (error) {
-        switchToHome();
+        F1.visible.switchToHome();
         F1.notification.insert("Error", error.message);
         data = null;
       }
@@ -203,8 +239,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (data) {
       populateRaces(selSeason.value, data);
-      hide("#mainLoading");
-      show("#browse");
+      F1.visible.hide("#mainLoading");
+      F1.visible.show("#browse");
       enable(".disable-on-load");
     }
 
@@ -241,34 +277,6 @@ document.addEventListener("DOMContentLoaded", () => {
     F1.data._racesSection.appendChild(racesTable);
   }
 
-  /*
-   * Purpose: To switch the view to Home.
-   *
-   * Details: It will takes a minimum of about a second and a maximum of three
-   * seconds to finish loading. It doesn't have anything to load; it simply
-   * displays the loading screen to make the process of switching views seem
-   * more impressive.
-   *
-   * Known Issues: It does not cache any element references; however, it is
-   * assumed that this won't be a big performance issue as it isn't often that
-   * the user can switch to Home.
-   */
-  function switchToHome() {
-    const maxTimeToLoad = 3000;
-    const timeToLoad = maxTimeToLoad - Math.random() * 2000;
-
-    disable(".disable-on-load");
-    hide("main > *");
-    F1.notification.clearAll();
-    show("#mainLoading");
-
-    setTimeout(() => {
-      hide("#mainLoading");
-      show("#home");
-      enable(".disable-on-load");
-    }, timeToLoad);
-  }
-
   handleLinkClasses();
-  switchToHome();
+  F1.visible.switchToHome();
 });
