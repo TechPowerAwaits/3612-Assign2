@@ -79,10 +79,10 @@ document.addEventListener("DOMContentLoaded", () => {
     },
 
     /*
-     * Purpose: Handles anything affecting the visibility and styling of an
-     * element.
+     * Purpose: Handles anything affecting the state of
+     * elements.
      */
-    visible: {
+    state: {
       /*
        * Purpose: Hides the elements selected by the given query.
        *
@@ -108,6 +108,37 @@ document.addEventListener("DOMContentLoaded", () => {
       },
 
       /*
+       * Purpose: Makes the elements selected by the given query look disabled.
+       *
+       * Details: Only elements that have CSS defined to disable themselves when
+       * data-disabled is 1 will work with this function.
+       */
+      disable: function (query) {
+        document
+          .querySelectorAll(query)
+          .forEach((elm) => (elm.dataset.disabled = "1"));
+      },
+
+      /*
+       * Purpose: Makes the elements selected by the given query look enabled.
+       *
+       * Details: Only elements that have CSS defined to enable themselves when
+       * data-disabled is 0 will work with this function.
+       */
+      enable: function (query) {
+        document
+          .querySelectorAll(query)
+          .forEach((elm) => (elm.dataset.disabled = "0"));
+      },
+
+      /*
+       * Purpose: Returns if the given element is disabled.
+       */
+      is_disabled: function (elm) {
+        return elm.dataset.disabled == "1";
+      },
+
+      /*
        * Purpose: To switch the view to Home.
        *
        * Details: It will takes a minimum of about a second and a maximum of three
@@ -123,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const maxTimeToLoad = 3000;
         const timeToLoad = maxTimeToLoad - Math.random() * 2000;
 
-        disable(".disable-on-load");
+        this.disable(".disable-on-load");
         this.hide("main > *");
         F1.notification.clearAll();
         this.show("#mainLoading");
@@ -131,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
           this.hide("#mainLoading");
           this.show("#home");
-          enable(".disable-on-load");
+          this.enable(".disable-on-load");
         }, timeToLoad);
       },
     },
@@ -158,41 +189,10 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   };
 
-  /*
-   * Purpose: Makes the elements selected by the given query look disabled.
-   *
-   * Details: Only elements that have CSS defined to disable themselves when
-   * data-disabled is 1 will work with this function.
-   */
-  function disable(query) {
-    document
-      .querySelectorAll(query)
-      .forEach((elm) => (elm.dataset.disabled = "1"));
-  }
-
-  /*
-   * Purpose: Makes the elements selected by the given query look enabled.
-   *
-   * Details: Only elements that have CSS defined to enable themselves when
-   * data-disabled is 0 will work with this function.
-   */
-  function enable(query) {
-    document
-      .querySelectorAll(query)
-      .forEach((elm) => (elm.dataset.disabled = "0"));
-  }
-
-  /*
-   * Purpose: Returns if the given element is disabled.
-   */
-  function is_disabled(elm) {
-    return elm.dataset.disabled == "1";
-  }
-
   const logo = document.querySelector("#logo");
   logo.addEventListener("click", () => {
-    if (!is_disabled(logo)) {
-      F1.visible.switchToHome();
+    if (!F1.state.is_disabled(logo)) {
+      F1.state.switchToHome();
     }
   });
 
@@ -210,10 +210,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   async function handleRaces(year, domain = F1.data.default_domain) {
-    disable(".disable-on-load");
-    F1.visible.hide("main > *");
+    F1.state.disable(".disable-on-load");
+    F1.state.hide("main > *");
     F1.notification.clearAll();
-    F1.visible.show("#mainLoading");
+    F1.state.show("#mainLoading");
 
     const dataID = `races${year}`;
     let data = localStorage.getItem(dataID);
@@ -229,7 +229,7 @@ document.addEventListener("DOMContentLoaded", () => {
         data.sort((r1, r2) => r1.round - r2.round);
         localStorage.setItem(dataID, JSON.stringify(data));
       } catch (error) {
-        F1.visible.switchToHome();
+        F1.state.switchToHome();
         F1.notification.insert("Error", error.message);
         data = null;
       }
@@ -239,9 +239,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (data) {
       populateRaces(selSeason.value, data);
-      F1.visible.hide("#mainLoading");
-      F1.visible.show("#browse");
-      enable(".disable-on-load");
+      F1.state.hide("#mainLoading");
+      F1.state.show("#browse");
+      F1.state.enable(".disable-on-load");
     }
 
     selSeason.value = "";
@@ -278,5 +278,5 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   handleLinkClasses();
-  F1.visible.switchToHome();
+  F1.state.switchToHome();
 });
