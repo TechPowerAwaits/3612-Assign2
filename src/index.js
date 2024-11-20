@@ -79,25 +79,11 @@ document.addEventListener("DOMContentLoaded", () => {
     },
 
     data: {
-      _cache: {},
-
       _racesTemplate: document.querySelector("#racesTemplate"),
 
       _racesResultsBtnTemplate: document.querySelector(
         "#racesResultsBtnTemplate",
       ),
-
-      _racesSection: document.querySelector("#races"),
-
-      _get_cached_data: function (dataID) {
-        let data = this._cache[dataID];
-
-        if (!data) {
-          data = localStorage.getItem(dataID);
-        }
-
-        return data;
-      },
 
       default_domain: "https://www.randyconnolly.com/funwebdev/3rd/api/f1",
 
