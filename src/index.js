@@ -56,10 +56,10 @@ document.addEventListener("DOMContentLoaded", () => {
       insert: function (title, msg = "", timeout = this.default_timeout) {
         const notification = this._notificationTemplate.content.cloneNode(true);
 
-        const notificationTitle = notification.querySelector(".title");
+        const notificationTitle = notification.querySelector("h2");
         notificationTitle.textContent = title;
 
-        const notificationBody = notification.querySelector(".body");
+        const notificationBody = notification.querySelector("p");
         notificationBody.textContent = msg;
 
         this._node.appendChild(notification);
