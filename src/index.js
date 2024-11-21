@@ -281,12 +281,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const name = document.createElement("td");
       name.textContent = race.name;
 
-      const btn = F1.data._racesResultsBtnTemplate.content.cloneNode(true);
+      const btnWrapper =
+        F1.data._racesResultsBtnTemplate.content.cloneNode(true);
+      btnWrapper.querySelector("button").dataset.racesId = race.id;
 
       const tr = document.createElement("tr");
       tr.appendChild(rnd);
       tr.appendChild(name);
-      tr.appendChild(btn);
+      tr.appendChild(btnWrapper);
 
       tableBody.appendChild(tr);
     });
