@@ -209,22 +209,40 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  /*
+   * Details: It is assumed that the retrieved data is unsorted.
+   */
   async function handleRaces(year, domain = F1.data.default_domain) {
     F1.state.disable(".disable-on-load");
     F1.state.hide("main > *");
     F1.notification.clearAll();
     F1.state.show("#mainLoading");
 
-    const dataID = `races${year}`;
+    const dataID = `allRaceData${year}`;
+
+    const racesIdx = 0;
+    const qualifyingIdx = 1;
+
     let data = localStorage.getItem(dataID);
 
     if (!data) {
       try {
-        data = await F1.data.checkedFetch(`${domain}/races.php?season=${year}`);
+        data = await Promise.all([
+          F1.data.checkedFetch(`${domain}/races.php?season=${year}`),
+          F1.data.checkedFetch(`${domain}/qualifying.php?season=${year}`),
+        ]);
 
-        if (data.error) {
-          throw new Error(data.error.message);
+        if (data[racesIdx].error) {
+          throw new Error(data[racesIdx].error.message);
         }
+
+        data[racesIdx].sort((r1, r2) => r1.round - r2.round);
+
+        if (data[qualifyingIdx].error) {
+          throw new Error(data[qualifyingIdx].error.message);
+        }
+
+        data[qualifyingIdx].sort((q1, q2) => q1.position - q2.position);
 
         data.sort((r1, r2) => r1.round - r2.round);
         localStorage.setItem(dataID, JSON.stringify(data));
@@ -238,7 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (data) {
-      populateRaces(selSeason.value, data);
+      populateRaces(selSeason.value, data[racesIdx]);
       F1.state.hide("#mainLoading");
       F1.state.show("#browse");
       F1.state.enable(".disable-on-load");
