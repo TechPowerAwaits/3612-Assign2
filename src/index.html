@@ -8,8 +8,16 @@
     <script src="index.js"></script>
   </head>
   <body class="bg-black text-white">
-    <header class="flex w-full items-center justify-between bg-orange-500">
-      <img src="Images/logo-mobile.png" alt="Logo" title="Go to main page" />
+    <header
+      class="disable-on-load flex w-full items-center justify-between bg-orange-500 data-[disabled=1]:bg-slate-700"
+    >
+      <img
+        class="disable-on-load cursor-pointer data-[disabled=1]:cursor-not-allowed data-[disabled=1]:grayscale"
+        id="logo"
+        src="Images/logo-mobile.png"
+        alt="Logo"
+        title="Go to main page"
+      />
       <h1 class="text-2xl text-blue-600">F1 Season Viewer</h1>
       <menu></menu>
     </header>
@@ -19,6 +27,19 @@
         otherwise.
       </p></noscript
     >
+    <ol
+      class="absolute bottom-3 right-3 flex flex-col-reverse gap-y-2"
+      id="notifications"
+    ></ol>
+    <figure
+      class="loading hidden h-dvh flex-col items-center justify-center data-[visible=1]:flex data-[visible=1]:cursor-progress"
+      id="mainLoading"
+    >
+      <img src="Images/loading.gif" />
+      <figcaption class="text-3xl font-black uppercase tracking-widest">
+        Loading...
+      </figcaption>
+    </figure>
     <main>
       <article
         class="hidden min-h-dvh justify-between gap-x-12 p-1 data-[visible=1]:flex"
@@ -30,11 +51,11 @@
           </h2>
           <label class="font-medium" for="selSeason">Season:</label>
           <select class="bg-neutral-700" id="selSeason">
-            <option value="0">No Season Selected</option>
-            <option value="1">2020</option>
-            <option value="2">2021</option>
-            <option value="3">2022</option>
-            <option value="4">2023</option>
+            <option value="">No Season Selected</option>
+            <option>2020</option>
+            <option>2021</option>
+            <option>2022</option>
+            <option>2023</option>
           </select>
 
           <details class="pt-2 text-sm">
@@ -91,6 +112,14 @@
                       class="text-green-500 visited:text-red-500 hover:text-yellow-300"
                       href="https://freesvg.org/red-roadster-in-space"
                       ><strong>Logo</strong> modified from Free SVG.</a
+                    >
+                  </li>
+                  <li class="has-[a:hover]:before:content-['\25C8']">
+                    <a
+                      class="text-green-500 visited:text-red-500 hover:text-yellow-300"
+                      href="https://tenor.com/view/vroooom-vroom-dog-gif-gif-20312530"
+                      ><strong>Loading GIF</strong> came from Tenor and was
+                      uploaded by bruwlstars.</a
                     >
                   </li>
                 </ul>
@@ -196,7 +225,41 @@
           </div>
         </aside>
       </article>
-      <article class="hidden" id="browse"></article>
+      <article
+        class="hidden justify-between p-1 data-[visible=1]:flex"
+        id="browse"
+      >
+        <section id="races"></section>
+        <section id="raceResults">Pick which Race you want displayed.</section>
+      </article>
     </main>
+
+    <template id="notificationTemplate">
+      <li
+        class="w-48 text-pretty break-words rounded-lg bg-lime-400 p-2 text-center"
+      >
+        <h2 class="font-semibold"></h2>
+        <p></p>
+      </li>
+    </template>
+    <template id="racesTemplate">
+      <h2 class="text-center text-xl font-semibold">[year] Races</h2>
+      <table
+        class="border-separate border-spacing-3 overflow-y-scroll text-center"
+      >
+        <thead>
+          <th scope="col" class="sortable round">Rnd</th>
+          <th scope="col" class="sortable name">Name</th>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </template>
+    <template id="racesResultsBtnTemplate">
+      <td>
+        <button class="rounded-sm bg-slate-500 px-1" type="button">
+          Results
+        </button>
+      </td>
+    </template>
   </body>
 </html>
