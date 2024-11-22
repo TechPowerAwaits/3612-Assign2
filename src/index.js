@@ -203,23 +203,42 @@ document.addEventListener("DOMContentLoaded", () => {
     ).dataset.visible = "1";
   }
 
+  /*
+   * Purpose: To clear all non-header rows in the given list.
+   */
+  function clearNonHeaderRows(list) {
+    list
+      .querySelectorAll(":not(.colHeader):is(li)")
+      .forEach((cell) => (cell.outerHTML = ""));
+  }
+
+  /*
+   * Purpose: To sort the content of the given array by the provided column name.
+   *
+   * Details: By default, data will be sorted in ascending order. The original
+   * array is left untouched.
+   *
+   * Returns: A sorted array of data.
+   */
+  function sortTabularData(data, sortCol, descending = false) {
+    return data.toSorted(
+      (d1, d2) =>
+        (descending ? -1 : 1) *
+        (d1[sortCol] > d2[sortCol] ? 1 : d1[sortCol] < d2[sortCol] ? -1 : 0),
+    );
+  }
+
+  /*
+   * Purpose: Populates all the race information into the races table.
+   */
   function populateRaces(list, data, sortColElm) {
     const sortCol = sortColElm.dataset.sort;
     const descending = shouldSortDescend(list, sortCol);
 
     updateSortArrow(list, sortColElm, descending);
+    clearNonHeaderRows(list);
 
-    list
-      .querySelectorAll(":not(.colHeader):is(li)")
-      .forEach((cell) => (cell.outerHTML = ""));
-
-    const sortedData = data.toSorted(
-      (d1, d2) =>
-        (descending ? -1 : 1) *
-        (d1[sortCol] > d2[sortCol] ? 1 : d1[sortCol] < d2[sortCol] ? -1 : 0),
-    );
-
-    sortedData.forEach((race) => {
+    sortTabularData(data, sortCol, descending).forEach((race) => {
       const round = document.createElement("li");
       round.textContent = race.round;
       list.appendChild(round);
