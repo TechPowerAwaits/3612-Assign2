@@ -248,7 +248,9 @@ document.addEventListener("DOMContentLoaded", () => {
       list.appendChild(name);
 
       const btnWrapper = document.createElement("li");
-      btnWrapper.appendChild(createArrowButton());
+      const btn = createArrowButton();
+      btn.dataset.raceID = race.id;
+      btnWrapper.appendChild(btn);
       list.appendChild(btnWrapper);
     });
 
