@@ -199,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .forEach((arrow) => (arrow.dataset.visible = "0"));
 
     sortColElm.querySelector(
-      descend ? ".downArrow" : ".upArrow",
+      descend ? ".upArrow" : ".downArrow",
     ).dataset.visible = "1";
   }
 
