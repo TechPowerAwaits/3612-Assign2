@@ -160,17 +160,21 @@ document.addEventListener("DOMContentLoaded", () => {
       const descending = shouldSortDescend(racesTable, e.target.dataset.sort);
 
       racesTable
-        .querySelectorAll(
-          `[data-sort = \"${racesTable.dataset.currSort}\"] > *`,
-        )
+        .querySelectorAll(`[data-sort = "${racesTable.dataset.currSort}"] > *`)
         .forEach((arrow) => (arrow.dataset.visible = "0"));
 
       e.target.querySelector(
         descending ? ".downArrow" : ".upArrow",
       ).dataset.visible = "1";
-    }
 
-    racesTable.dataset.currSort = e.target.dataset.sort;
+      console.table(racesTable.querySelectorAll(":not(.colHeader):is(li)"));
+
+      racesTable
+        .querySelectorAll(":not(.colHeader):is(li)")
+        .forEach((cell) => (cell.outerHTML = ""));
+
+      racesTable.dataset.currSort = e.target.dataset.sort;
+    }
   });
 
   /*
