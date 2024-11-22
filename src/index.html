@@ -9,17 +9,22 @@
   </head>
   <body class="bg-black text-white">
     <header
-      class="disable-on-load flex w-full items-center justify-between bg-orange-500 data-[disabled=1]:bg-slate-700"
+      class="flex w-full items-center justify-between bg-orange-500 has-[:disabled]:bg-slate-700"
     >
-      <img
-        class="disable-on-load cursor-pointer -outline-offset-2 outline-blue-600 hover:outline data-[disabled=1]:cursor-not-allowed data-[disabled=1]:outline-gray-500 data-[disabled=1]:grayscale"
-        id="logo"
-        src="Images/logo-mobile.png"
-        width="83"
-        height="64"
-        alt="Logo"
-        title="Go to main page"
-      />
+      <button
+        class="group -outline-offset-2 outline-blue-600 hover:outline disabled:cursor-not-allowed disabled:outline-gray-500"
+        id="logoButton"
+        type="button"
+      >
+        <img
+          class="group-disabled:grayscale"
+          src="Images/logo-mobile.png"
+          width="83"
+          height="64"
+          alt="Logo"
+          title="Go to main page"
+        />
+      </button>
       <h1 class="text-2xl text-blue-600">F1 Season Viewer</h1>
       <menu></menu>
     </header>

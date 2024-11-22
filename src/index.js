@@ -61,6 +61,9 @@ document.addEventListener("DOMContentLoaded", () => {
      * elements.
      */
     state: {
+      /* Purpose: To store a reference to the logo's button in the header. */
+      logoButton: document.querySelector("#logoButton"),
+
       /*
        * Purpose: Hides the elements selected by the given query.
        *
@@ -86,37 +89,6 @@ document.addEventListener("DOMContentLoaded", () => {
       },
 
       /*
-       * Purpose: Makes the elements selected by the given query look disabled.
-       *
-       * Details: Only elements that have CSS defined to disable themselves when
-       * data-disabled is 1 will work with this function.
-       */
-      disable: function (query) {
-        document
-          .querySelectorAll(query)
-          .forEach((elm) => (elm.dataset.disabled = "1"));
-      },
-
-      /*
-       * Purpose: Makes the elements selected by the given query look enabled.
-       *
-       * Details: Only elements that have CSS defined to enable themselves when
-       * data-disabled is 0 will work with this function.
-       */
-      enable: function (query) {
-        document
-          .querySelectorAll(query)
-          .forEach((elm) => (elm.dataset.disabled = "0"));
-      },
-
-      /*
-       * Purpose: Returns if the given element is disabled.
-       */
-      is_disabled: function (elm) {
-        return elm.dataset.disabled == "1";
-      },
-
-      /*
        * Purpose: To switch the view to Home.
        *
        * Details: It will takes a minimum of about a second and a maximum of three
@@ -124,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
        * displays the loading screen to make the process of switching views seem
        * more impressive.
        *
-       * Known Issues: It does not cache any element references; however, it is
+       * Known Issues: It does not cache some element references; however, it is
        * assumed that this won't be a big performance issue as it isn't often that
        * the user can switch to Home.
        */
@@ -132,15 +104,15 @@ document.addEventListener("DOMContentLoaded", () => {
         const maxTimeToLoad = 3000;
         const timeToLoad = maxTimeToLoad - Math.random() * 2000;
 
-        this.disable(".disable-on-load");
-        this.hide("main > *");
+        F1.state.logoButton.setAttribute("disabled", "");
+        F1.state.hide("main > *");
         F1.notification.clearAll();
-        this.show("#mainLoading");
+        F1.state.show("#mainLoading");
 
         setTimeout(() => {
-          this.hide("#mainLoading");
-          this.show("#home");
-          this.enable(".disable-on-load");
+          F1.state.hide("#mainLoading");
+          F1.state.show("#home");
+          F1.state.logoButton.removeAttribute("disabled");
         }, timeToLoad);
       },
     },
@@ -167,12 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   };
 
-  const logo = document.querySelector("#logo");
-  logo.addEventListener("click", () => {
-    if (!F1.state.is_disabled(logo)) {
-      F1.state.switchToHome();
-    }
-  });
+  F1.state.logoButton.addEventListener("click", F1.state.switchToHome);
 
   const selSeason = document.querySelector("#selSeason");
   selSeason.addEventListener("change", () => {
@@ -191,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
    * Details: It is assumed that the retrieved data is unsorted.
    */
   async function handleRaces(year, domain = F1.data.default_domain) {
-    F1.state.disable(".disable-on-load");
+    F1.state.logoButton.setAttribute("disabled", "");
     F1.state.hide("main > *");
     F1.notification.clearAll();
     F1.state.show("#mainLoading");
@@ -237,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
       populateRaces(selSeason.value, data[racesIdx]);
       F1.state.hide("#mainLoading");
       F1.state.show("#browse");
-      F1.state.enable(".disable-on-load");
+      F1.state.logoButton.removeAttribute("disabled");
     }
 
     selSeason.value = "";
