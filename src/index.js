@@ -126,6 +126,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       _racesSection: document.querySelector("#races"),
 
+      current: [],
+      racesIdx: 0,
+      qualifyingIdx: 1,
+
       default_domain: "https://www.randyconnolly.com/funwebdev/3rd/api/f1",
 
       checkedFetch: async function (url) {
@@ -157,23 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const racesTable = F1.data._racesSection.querySelector("ul");
   racesTable.addEventListener("click", (e) => {
     if (e.target.dataset.sort) {
-      const descending = shouldSortDescend(racesTable, e.target.dataset.sort);
-
-      racesTable
-        .querySelectorAll(`[data-sort = "${racesTable.dataset.currSort}"] > *`)
-        .forEach((arrow) => (arrow.dataset.visible = "0"));
-
-      e.target.querySelector(
-        descending ? ".downArrow" : ".upArrow",
-      ).dataset.visible = "1";
-
-      console.table(racesTable.querySelectorAll(":not(.colHeader):is(li)"));
-
-      racesTable
-        .querySelectorAll(":not(.colHeader):is(li)")
-        .forEach((cell) => (cell.outerHTML = ""));
-
-      racesTable.dataset.currSort = e.target.dataset.sort;
+      populateRaces(racesTable, F1.data.current[F1.data.racesIdx], e.target);
     }
   });
 
@@ -201,8 +189,51 @@ document.addEventListener("DOMContentLoaded", () => {
     return descending;
   }
 
-  function populateList(list, data, sortCol) {
-    //
+  /*
+   * Purpose: Updates the arrows representing the sorting direction in the
+   * given list.
+   */
+  function updateSortArrow(list, sortColElm, descend) {
+    list
+      .querySelectorAll(`[data-sort = "${list.dataset.currSort}"] > *`)
+      .forEach((arrow) => (arrow.dataset.visible = "0"));
+
+    sortColElm.querySelector(
+      descend ? ".downArrow" : ".upArrow",
+    ).dataset.visible = "1";
+  }
+
+  function populateRaces(list, data, sortColElm) {
+    const sortCol = sortColElm.dataset.sort;
+    const descending = shouldSortDescend(list, sortCol);
+
+    updateSortArrow(list, sortColElm, descending);
+
+    list
+      .querySelectorAll(":not(.colHeader):is(li)")
+      .forEach((cell) => (cell.outerHTML = ""));
+
+    const sortedData = data.toSorted(
+      (d1, d2) =>
+        (descending ? -1 : 1) *
+        (d1[sortCol] > d2[sortCol] ? 1 : d1[sortCol] < d2[sortCol] ? -1 : 0),
+    );
+
+    sortedData.forEach((race) => {
+      const round = document.createElement("li");
+      round.textContent = race.round;
+      list.appendChild(round);
+
+      const name = document.createElement("li");
+      name.textContent = race.name;
+      list.appendChild(name);
+
+      const btnWrapper = document.createElement("li");
+      btnWrapper.appendChild(createArrowButton());
+      list.appendChild(btnWrapper);
+    });
+
+    list.dataset.currSort = sortCol;
   }
 
   /*
@@ -216,9 +247,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const dataID = `allRaceData${year}`;
 
-    const racesIdx = 0;
-    const qualifyingIdx = 1;
-
     let data = localStorage.getItem(dataID);
 
     if (!data) {
@@ -228,19 +256,14 @@ document.addEventListener("DOMContentLoaded", () => {
           F1.data.checkedFetch(`${domain}/qualifying.php?season=${year}`),
         ]);
 
-        if (data[racesIdx].error) {
-          throw new Error(data[racesIdx].error.message);
+        if (data[F1.data.racesIdx].error) {
+          throw new Error(data[F1.data.racesIdx].error.message);
         }
 
-        data[racesIdx].sort((r1, r2) => r1.round - r2.round);
-
-        if (data[qualifyingIdx].error) {
-          throw new Error(data[qualifyingIdx].error.message);
+        if (data[F1.data.qualifyingIdx].error) {
+          throw new Error(data[F1.data.qualifyingIdx].error.message);
         }
 
-        data[qualifyingIdx].sort((q1, q2) => q1.position - q2.position);
-
-        data.sort((r1, r2) => r1.round - r2.round);
         localStorage.setItem(dataID, JSON.stringify(data));
       } catch (error) {
         F1.state.switchToHome();
@@ -252,7 +275,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (data) {
-      //populateRaces(selSeason.value, data[racesIdx]);
+      F1.data.current = data;
+
+      const h2 = F1.data._racesSection.querySelector("h2");
+      const h2Text = h2.textContent.replace("[year]", year);
+      h2.textContent = h2Text;
+
+      populateRaces(
+        racesTable,
+        data[F1.data.racesIdx],
+        racesTable.querySelector('[data-sort = "round"]'),
+      );
+
       F1.state.hide("#mainLoading");
       F1.state.show("#browse");
       F1.state.logoButton.removeAttribute("disabled");
@@ -261,36 +295,26 @@ document.addEventListener("DOMContentLoaded", () => {
     selSeason.value = "";
   }
 
-  function populateRaces(year, racesData) {
-    const racesTable = F1.data._racesTemplate.content.cloneNode(true);
+  /*
+   * Purpose: Creates and returns a small button with a right-facing arrow.
+   *
+   * Details: The created element is not added to the DOM.
+   *
+   * Returns: A (very pretty) button.
+   */
+  function createArrowButton() {
+    const btn = document.createElement("button");
 
-    const h2 = racesTable.querySelector("h2");
-    const h2Text = h2.textContent.replace("[year]", year);
-    h2.textContent = h2Text;
+    btn.textContent = ">";
+    btn.setAttribute("type", "button");
+    btn.classList.add(
+      "rounded-sm",
+      "bg-slate-500",
+      "px-1",
+      "hover:bg-blue-300",
+    );
 
-    const tableBody = racesTable.querySelector("tbody");
-
-    racesData.forEach((race) => {
-      const rnd = document.createElement("td");
-      rnd.textContent = race.round;
-
-      const name = document.createElement("td");
-      name.textContent = race.name;
-
-      const btnWrapper =
-        F1.data._racesResultsBtnTemplate.content.cloneNode(true);
-      btnWrapper.querySelector("button").dataset.racesId = race.id;
-
-      const tr = document.createElement("tr");
-      tr.appendChild(rnd);
-      tr.appendChild(name);
-      tr.appendChild(btnWrapper);
-
-      tableBody.appendChild(tr);
-    });
-
-    F1.data._racesSection.innerHTML = "";
-    F1.data._racesSection.appendChild(racesTable);
+    return btn;
   }
 
   F1.state.switchToHome();
