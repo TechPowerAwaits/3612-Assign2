@@ -235,9 +235,11 @@
         <section id="races">
           <h2 class="text-center text-lg font-semibold lg:text-xl">
             [year] Races
-          </h3>
-          <ul class="grid grid-flow-row grid-cols-3">
-            <li class="colHeader" data-sort="round">
+          </h2>
+          <ul
+            class="grid grid-flow-row grid-cols-[max-content_max-content_max-content] justify-center gap-1 text-center"
+          >
+            <li class="colHeader font-bold" data-sort="round">
               Rnd
               <span class="upArrow hidden data-[visible=1]:inline"
                 >&#x2B06;</span
@@ -245,7 +247,7 @@
                 >&#x2B07;</span
               >
             </li>
-            <li class="colHeader" data-sort="name">
+            <li class="colHeader font-bold" data-sort="name">
               Name
               <span class="upArrow hidden data-[visible=1]:inline"
                 >&#x2B06;</span
@@ -253,7 +255,7 @@
                 >&#x2B07;</span
               >
             </li>
-            <li class="colHeader"></li>
+            <li class="colHeader font-bold"></li>
           </ul>
         </section>
         <section class="hidden" id="noRaceResults">
@@ -295,7 +297,9 @@
           </hgroup>
 
           <section>
-            <h3 class="text-center text-lg font-medium">Qualifying</h3>
+            <h3 class="text-center text-lg font-semibold lg:text-xl">
+              Qualifying
+            </h3>
             <table
               class="border-separate border-spacing-1 text-center text-sm lg:text-base xl:border-spacing-3"
             >
@@ -332,7 +336,9 @@
             </table>
           </section>
           <section>
-            <h3 class="text-center text-lg font-medium">Results</h3>
+            <h3 class="text-center text-lg font-semibold lg:text-xl">
+              Results
+            </h3>
             <table
               class="border-separate border-spacing-1 text-center text-sm lg:text-base xl:border-spacing-3"
             >
