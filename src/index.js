@@ -201,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (data) {
-      populateRaces(selSeason.value, data[racesIdx]);
+      //populateRaces(selSeason.value, data[racesIdx]);
       F1.state.hide("#mainLoading");
       F1.state.show("#browse");
       F1.state.logoButton.removeAttribute("disabled");
