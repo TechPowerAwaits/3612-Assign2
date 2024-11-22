@@ -154,6 +154,34 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  const racesTable = F1.data._racesSection.querySelector("ul");
+  racesTable.addEventListener("click", (e) => {
+    if (e.target.dataset.sort) {
+      const sameAsPrev = e.target.dataset.sort === racesTable.dataset.currSort;
+      let descending = false;
+
+      if (racesTable.dataset.descending === "1" || !sameAsPrev) {
+        descending = false;
+        racesTable.dataset.descending = "0";
+      } else {
+        descending = true;
+        racesTable.dataset.descending = "1";
+      }
+
+      racesTable
+        .querySelectorAll(
+          `[data-sort = \"${racesTable.dataset.currSort}\"] > *`,
+        )
+        .forEach((arrow) => (arrow.dataset.visible = "0"));
+
+      e.target.querySelector(
+        descending ? ".downArrow" : ".upArrow",
+      ).dataset.visible = "1";
+    }
+
+    racesTable.dataset.currSort = e.target.dataset.sort;
+  });
+
   /*
    * Details: It is assumed that the retrieved data is unsorted.
    */
