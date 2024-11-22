@@ -157,16 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const racesTable = F1.data._racesSection.querySelector("ul");
   racesTable.addEventListener("click", (e) => {
     if (e.target.dataset.sort) {
-      const sameAsPrev = e.target.dataset.sort === racesTable.dataset.currSort;
-      let descending = false;
-
-      if (racesTable.dataset.descending === "1" || !sameAsPrev) {
-        descending = false;
-        racesTable.dataset.descending = "0";
-      } else {
-        descending = true;
-        racesTable.dataset.descending = "1";
-      }
+      const descending = shouldSortDescend(racesTable, e.target.dataset.sort);
 
       racesTable
         .querySelectorAll(
@@ -181,6 +172,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
     racesTable.dataset.currSort = e.target.dataset.sort;
   });
+
+  /*
+   * Purpose: Determines if an upcoming sort operation should be ascending or descending.
+   *
+   * Details: The provided list object is modified to keep track of when a sort was last
+   * descending. Sorting is guaranteed ascending by default except for every second
+   * consecutive operation to sort by the same column.
+   *
+   * Returns: True if the sort operation should be descending. False otherwise.
+   */
+  function shouldSortDescend(list, sortCol) {
+    const sameAsPrev = sortCol === list.dataset.currSort;
+    let descending = false;
+
+    if (list.dataset.descending === "1" || !sameAsPrev) {
+      descending = false;
+      list.dataset.descending = "0";
+    } else {
+      descending = true;
+      list.dataset.descending = "1";
+    }
+
+    return descending;
+  }
+
+  function populateList(list, data, sortCol) {
+    //
+  }
 
   /*
    * Details: It is assumed that the retrieved data is unsorted.
