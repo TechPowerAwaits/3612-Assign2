@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/tailwind.min.css" />
     <script src="index.js"></script>
   </head>
-  <body class="bg-black text-white">
+  <body class="flex h-lvh flex-col bg-black text-white">
     <header
       class="flex w-full items-center justify-between bg-orange-500 has-[:disabled]:bg-slate-700"
     >
@@ -39,7 +39,7 @@
       id="notifications"
     ></ol>
     <figure
-      class="loading hidden h-dvh flex-col items-center justify-center data-[visible=1]:flex data-[visible=1]:cursor-progress"
+      class="loading hidden h-full place-content-center self-center data-[visible=1]:grid data-[visible=1]:cursor-progress"
       id="mainLoading"
     >
       <img src="Images/loading.gif" width="112" height="112" />
