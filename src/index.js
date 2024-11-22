@@ -165,6 +165,42 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  const qualifyingTable = F1.querySelector("#qualifyingTable");
+  racesTable.addEventListener("click", (e) => {
+    if (e.target.dataset.raceID) {
+      populateQualifying(
+        qualifyingTable,
+        F1.data.current[F1.data.qualifyingIdx],
+        e.target,
+      );
+      /*populateResults(
+        resultsTable,
+        F1.data.current[F1.data.resultsIdx],
+        e.target,
+      );*/
+    }
+  });
+
+  qualifyingTable.addEventListener("click", (e) => {
+    if (e.target.dataset.sort) {
+      populateQualifying(
+        qualifyingTable,
+        F1.data.current[F1.data.qualifyingIdx],
+        e.target,
+      );
+    }
+  });
+
+  /*resultsTable.addEventListener("click", (e) => {
+    if (e.target.dataset.sort) {
+      populateResults(
+        resultsTable,
+        F1.data.current[F1.data.resultsIdx],
+        e.target,
+      );
+    }
+  });*/
+
   /*
    * Purpose: Determines if an upcoming sort operation should be ascending or descending.
    *
@@ -258,6 +294,50 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /*
+   * Purpose: Populates all the qualifying information into the qualifying
+   * table.
+   */
+  function populateQualifying(list, data, sortColElm) {
+    const sortCol = sortColElm.dataset.sort;
+    const descending = shouldSortDescend(list, sortCol);
+
+    updateSortArrow(list, sortColElm, descending);
+    clearNonHeaderRows(list);
+
+    sortTabularData(data, sortCol, descending).forEach((qual) => {
+      const position = document.createElement("li");
+      position.textContent = qual.position;
+      list.appendChild(position);
+
+      const driver = document.createElement("li");
+      const driverBtn = createTextButton(
+        `${qual.driver.forename} ${qual.driver.surname}`,
+      );
+      driver.appendChild(driverBtn);
+      list.appendChild(driver);
+
+      const constructor = document.createElement("li");
+      const constBtn = createTextButton(qual.constructor.name);
+      constructor.appendChild(constBtn);
+      list.appendChild(constructor);
+
+      const q1 = document.createElement("li");
+      q1.textContent = qual.q1;
+      list.appendChild(q1);
+
+      const q2 = document.createElement("li");
+      q2.textContent = qual.q2;
+      list.appendChild(q2);
+
+      const q3 = document.createElement("li");
+      q3.textContent = qual.q3;
+      list.appendChild(q3);
+    });
+
+    list.dataset.currSort = sortCol;
+  }
+
+  /*
    * Details: It is assumed that the retrieved data is unsorted.
    */
   async function handleRaces(year, domain = F1.data.default_domain) {
@@ -340,3 +420,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   F1.state.switchToHome();
 });
+
+/*
+ * Purpose: Creates and returns a styled text-based button with the given
+ * button.
+ *
+ * Details: The created element is not added to the DOM.
+ *
+ * Returns: A (hyperlink-looking) button.
+ */
+function createTextButton(text) {
+  const btn = document.createElement("button");
+
+  btn.textContent = text;
+  btn.setAttribute("type", "button");
+  btn.classList.add("underline", "decoration-dotted", "hover:text-blue-300");
+
+  return btn;
+}
