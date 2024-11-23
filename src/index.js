@@ -263,14 +263,28 @@ document.addEventListener("DOMContentLoaded", () => {
    * Details: By default, data will be sorted in ascending order. The original
    * array is left untouched.
    *
+   * If the attribute to sort by is not at the top-level of an object, the path to
+   * the target can be specified with dots. For instance, a sortCol value of
+   * "subobj.target" will result in a comparison with the target attribute inside
+   * the subobj to determine the ordering of the data.
+   *
    * Returns: A sorted array of data.
    */
   function sortTabularData(data, sortCol, descending = false) {
-    return data.toSorted(
-      (d1, d2) =>
-        (descending ? -1 : 1) *
-        (d1[sortCol] > d2[sortCol] ? 1 : d1[sortCol] < d2[sortCol] ? -1 : 0),
-    );
+    const colPathSep = ".";
+    const colPath = sortCol.split(colPathSep);
+
+    return data.toSorted((d1, d2) => {
+      let t1 = d1;
+      let t2 = d2;
+
+      for (let i = 0; i < colPath.length; i++) {
+        t1 = t1[colPath[i]];
+        t2 = t2[colPath[i]];
+      }
+
+      return (descending ? -1 : 1) * (t1 > t2 ? 1 : t1 < t2 ? -1 : 0);
+    });
   }
 
   /*
