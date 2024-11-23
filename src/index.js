@@ -165,13 +165,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  const qualifyingTable = F1.querySelector("#qualifyingTable");
+  const qualifyingTable = document.querySelector("#qualifyingTable");
   racesTable.addEventListener("click", (e) => {
     if (e.target.dataset.raceID) {
       populateQualifying(
         qualifyingTable,
         F1.data.current[F1.data.qualifyingIdx],
-        e.target,
+        qualifyingTable.querySelector('[data-sort = "position"]'),
       );
       /*populateResults(
         resultsTable,
@@ -303,6 +303,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateSortArrow(list, sortColElm, descending);
     clearNonHeaderRows(list);
+
+    for (qual of data) {
+      if (qual.driverName) {
+        break;
+      }
+
+      qual.driverName = `${qual.driver.forename} ${qual.driver.surname}`;
+    }
 
     sortTabularData(data, sortCol, descending).forEach((qual) => {
       const position = document.createElement("li");
