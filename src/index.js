@@ -166,6 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   const qualifyingTable = document.querySelector("#qualifyingTable");
+  const resultsTable = document.querySelector("#resultsTable");
   racesTable.addEventListener("click", (e) => {
     const raceID = e.target.dataset.raceID;
 

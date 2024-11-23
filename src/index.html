@@ -238,6 +238,7 @@
           </h2>
           <ul
             class="grid grid-flow-row grid-cols-[max-content_max-content_max-content] justify-center gap-1 text-center"
+            id="racesTable"
           >
             <li class="colHeader font-bold">
               <button
@@ -398,6 +399,76 @@
             <h3 class="text-center text-lg font-semibold lg:text-xl">
               Results
             </h3>
+            <ul
+              class="grid grid-flow-row grid-cols-[max-content_max-content_max-content_max-content_max-content_max-content] justify-center gap-1 text-center"
+              id="resultsTable"
+            >
+              <li class="colHeader font-bold">
+                <button
+                  class="underline decoration-dotted hover:text-blue-300"
+                  data-sort="position"
+                >
+                  Pos
+                  <span class="upArrow hidden data-[visible=1]:inline"
+                    >&#x2B06;</span
+                  ><span class="downArrow hidden data-[visible=1]:inline"
+                    >&#x2B07;</span
+                  >
+                </button>
+              </li>
+              <li class="colHeader font-bold">
+                <button
+                  class="underline decoration-dotted hover:text-blue-300"
+                  data-sort="driverName"
+                >
+                  Name
+                  <span class="upArrow hidden data-[visible=1]:inline"
+                    >&#x2B06;</span
+                  ><span class="downArrow hidden data-[visible=1]:inline"
+                    >&#x2B07;</span
+                  >
+                </button>
+              </li>
+              <li class="colHeader font-bold">
+                <button
+                  class="underline decoration-dotted hover:text-blue-300"
+                  data-sort="constructor.name"
+                >
+                  Const
+                  <span class="upArrow hidden data-[visible=1]:inline"
+                    >&#x2B06;</span
+                  ><span class="downArrow hidden data-[visible=1]:inline"
+                    >&#x2B07;</span
+                  >
+                </button>
+              </li>
+              <li class="colHeader font-bold">
+                <button
+                  class="underline decoration-dotted hover:text-blue-300"
+                  data-sort="laps"
+                >
+                  Laps
+                  <span class="upArrow hidden data-[visible=1]:inline"
+                    >&#x2B06;</span
+                  ><span class="downArrow hidden data-[visible=1]:inline"
+                    >&#x2B07;</span
+                  >
+                </button>
+              </li>
+              <li class="colHeader font-bold">
+                <button
+                  class="underline decoration-dotted hover:text-blue-300"
+                  data-sort="points"
+                >
+                  Pts
+                  <span class="upArrow hidden data-[visible=1]:inline"
+                    >&#x2B06;</span
+                  ><span class="downArrow hidden data-[visible=1]:inline"
+                    >&#x2B07;</span
+                  >
+                </button>
+              </li>
+            </ul>
             <table
               class="border-separate border-spacing-1 text-center text-sm lg:text-base xl:border-spacing-3"
             >
