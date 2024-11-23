@@ -278,30 +278,45 @@
         >
           <hgroup
             class="col-span-2 text-balance text-center text-lg font-semibold lg:text-xl"
+            id="raceInfoBlock"
           >
             <h2>
               🏁
               <a
                 class="underline decoration-dotted hover:text-blue-300 hover:visited:text-red-300"
                 href="https://en.wikipedia.org/wiki/2023_Bahrain_Grand_Prix"
-                >2023 Bahrain Grand Prix</a
+                id="raceLink"
+                ><span id="raceYear">2023</span>
+                <span id="raceName">Bahrain Grand Prix</span></a
               >
               (Round 1) 🏁
             </h2>
             <p>
-              🌎 In
-              <a
+              🚀 In
+              <button
+                id="circuitBtn"
                 class="underline decoration-dotted hover:text-blue-300 hover:visited:text-red-300"
-                href="http://en.wikipedia.org/wiki/Bahrain_International_Circuit"
-                >Bahrain International Circuit</a
-              >! 🌎
+                type="button"
+              >
+                Bahrain International Circuit</button
+              >!
+              <sup class="text-xs font-normal"
+                >[🌎<a
+                  id="circuitWebLink"
+                  class="underline decoration-dotted hover:text-blue-300 hover:visited:text-red-300"
+                  href="http://en.wikipedia.org/wiki/Bahrain_International_Circuit"
+                  >extern</a
+                >🌎]</sup
+              >
+              🚀
             </p>
             <p>
               📅
               <a
+                id="dateWebLink"
                 class="underline decoration-dotted hover:text-blue-300 hover:visited:text-red-300"
                 href="https://www.onthisday.com/date/2023/march/5"
-                ><time>2023-03-05</time></a
+                ><time id="raceDate">2023-03-05</time></a
               >
               📅
             </p>
