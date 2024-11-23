@@ -167,15 +167,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const qualifyingTable = document.querySelector("#qualifyingTable");
   racesTable.addEventListener("click", (e) => {
+    const raceID = e.target.dataset.raceID;
+
     if (e.target.dataset.raceID) {
+      qualifyingTable.dataset.raceID = raceID;
+      // resultsTable.dataset.raceID = raceID;
+
       populateQualifying(
         qualifyingTable,
         F1.data.current[F1.data.qualifyingIdx],
+        raceID,
         qualifyingTable.querySelector('[data-sort = "position"]'),
       );
       /*populateResults(
         resultsTable,
         F1.data.current[F1.data.resultsIdx],
+        raceID,
         e.target,
       );*/
     }
@@ -186,6 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
       populateQualifying(
         qualifyingTable,
         F1.data.current[F1.data.qualifyingIdx],
+        qualifyingTable.dataset.raceID,
         e.target,
       );
     }
@@ -196,6 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
       populateResults(
         resultsTable,
         F1.data.current[F1.data.resultsIdx],
+        resultsTable.dataset.raceID,
         e.target,
       );
     }
@@ -294,25 +303,23 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /*
-   * Purpose: Populates all the qualifying information into the qualifying
+   * Purpose: Populates all the qualifying information for the given race into the qualifying
    * table.
    */
-  function populateQualifying(list, data, sortColElm) {
+  function populateQualifying(list, data, raceID, sortColElm) {
     const sortCol = sortColElm.dataset.sort;
     const descending = shouldSortDescend(list, sortCol);
 
     updateSortArrow(list, sortColElm, descending);
     clearNonHeaderRows(list);
 
-    for (qual of data) {
-      if (qual.driverName) {
-        break;
-      }
+    const qualRaceData = data.filter((qual) => qual.race.id == raceID);
+    qualRaceData.forEach(
+      (qual) =>
+        (qual.driverName = `${qual.driver.forename} ${qual.driver.surname}`),
+    );
 
-      qual.driverName = `${qual.driver.forename} ${qual.driver.surname}`;
-    }
-
-    sortTabularData(data, sortCol, descending).forEach((qual) => {
+    sortTabularData(qualRaceData, sortCol, descending).forEach((qual) => {
       const position = document.createElement("li");
       position.textContent = qual.position;
       list.appendChild(position);
