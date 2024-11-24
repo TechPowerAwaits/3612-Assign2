@@ -237,7 +237,7 @@
         </aside>
       </article>
       <article
-        class="hidden grid-flow-col p-1 data-[visible=1]:grid"
+        class="grid-cols-max-2 hidden gap-x-3 p-1 data-[visible=1]:grid"
         id="browse"
       >
         <section id="races">
@@ -277,7 +277,10 @@
             <li class="colHeader font-bold"></li>
           </ul>
         </section>
-        <section class="block peer-data-[visible=1]:hidden" id="noRaceResults">
+        <aside
+          class="hidden peer-data-[visible=1]:hidden md:block"
+          id="noRaceResults"
+        >
           <h2
             class="text-wrap text-center text-xl font-semibold capitalize tracking-wide"
           >
@@ -301,7 +304,7 @@
               </figcaption>
             </figure>
           </a>
-        </section>
+        </aside>
         <section
           class="peer hidden grid-cols-2 gap-y-8 data-[visible=1]:grid"
           id="raceResults"
