@@ -407,15 +407,7 @@ document.addEventListener("DOMContentLoaded", () => {
       position.textContent = qual.position;
       list.appendChild(position);
 
-      const driverFName = document.createElement("li");
-      const driverFNameBtn = createTextButton(qual.driver.forename);
-      driverFName.appendChild(driverFNameBtn);
-      list.appendChild(driverFName);
-
-      const driverLName = document.createElement("li");
-      const driverLNameBtn = createTextButton(qual.driver.surname);
-      driverLName.appendChild(driverLNameBtn);
-      list.appendChild(driverLName);
+      appendDriverName(list, qual.driver);
 
       const constructor = document.createElement("li");
       const constBtn = createTextButton(qual.constructor.name);
@@ -436,6 +428,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     list.dataset.currSort = sortCol;
+  }
+
+  /*
+   * Purpose: Appends the given driver to the provided list.
+   */
+  function appendDriverName(list, driver) {
+    const driverFName = document.createElement("li");
+    const driverFNameBtn = createTextButton(driver.forename);
+    driverFName.appendChild(driverFNameBtn);
+    list.appendChild(driverFName);
+
+    const driverLName = document.createElement("li");
+    const driverLNameBtn = createTextButton(driver.surname);
+    driverLName.appendChild(driverLNameBtn);
+    list.appendChild(driverLName);
   }
 
   /*
