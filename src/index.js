@@ -408,11 +408,7 @@ document.addEventListener("DOMContentLoaded", () => {
       list.appendChild(position);
 
       appendDriverName(list, qual.driver);
-
-      const constructor = document.createElement("li");
-      const constBtn = createTextButton(qual.constructor.name);
-      constructor.appendChild(constBtn);
-      list.appendChild(constructor);
+      appendConstructorName(list, qual.constructor);
 
       const q1 = document.createElement("li");
       q1.textContent = qual.q1;
@@ -443,6 +439,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const driverLNameBtn = createTextButton(driver.surname);
     driverLName.appendChild(driverLNameBtn);
     list.appendChild(driverLName);
+  }
+
+  /*
+   * Purpose: Appends the given constructor to the provided list.
+   */
+  function appendConstructorName(list, constructor) {
+    const constructorNode = document.createElement("li");
+    const constBtn = createTextButton(constructor.name);
+    constructorNode.appendChild(constBtn);
+    list.appendChild(constructorNode);
   }
 
   /*
