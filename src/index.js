@@ -129,6 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
       current: [],
       racesIdx: 0,
       qualifyingIdx: 1,
+      resultsIdx: 2,
 
       default_domain: "https://www.randyconnolly.com/funwebdev/3rd/api/f1",
 
@@ -469,15 +470,14 @@ document.addEventListener("DOMContentLoaded", () => {
         data = await Promise.all([
           F1.data.checkedFetch(`${domain}/races.php?season=${year}`),
           F1.data.checkedFetch(`${domain}/qualifying.php?season=${year}`),
+          F1.data.checkedFetch(`${domain}/results.php?season=${year}`),
         ]);
 
-        if (data[F1.data.racesIdx].error) {
-          throw new Error(data[F1.data.racesIdx].error.message);
-        }
-
-        if (data[F1.data.qualifyingIdx].error) {
-          throw new Error(data[F1.data.qualifyingIdx].error.message);
-        }
+        data.forEach((dataset) => {
+          if (dataset.error) {
+            throw new Error(dataset.error.message);
+          }
+        });
 
         localStorage.setItem(dataID, JSON.stringify(data));
       } catch (error) {
