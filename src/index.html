@@ -331,7 +331,7 @@
               Qualifying
             </h3>
             <ul
-              class="grid grid-flow-row grid-cols-[max-content_max-content_max-content_max-content_max-content_max-content] justify-center gap-1 text-center"
+              class="grid grid-flow-row grid-cols-[max-content_max-content_max-content_max-content_max-content_max-content_max-content] justify-center gap-1 text-center"
               id="qualifyingTable"
             >
               <li class="colHeader font-bold">
@@ -347,18 +347,10 @@
                   >
                 </button>
               </li>
-              <li class="colHeader font-bold">
-                <button
-                  class="underline decoration-dotted hover:text-blue-300"
-                  data-sort="driverName"
-                >
-                  Name
-                  <span class="upArrow hidden data-[visible=1]:inline"
-                    >&#x2B06;</span
-                  ><span class="downArrow hidden data-[visible=1]:inline"
-                    >&#x2B07;</span
-                  >
-                </button>
+              <li
+                class="colHeader col-span-2 cursor-not-allowed font-bold underline decoration-solid hover:text-gray-500"
+              >
+                Driver
               </li>
               <li class="colHeader font-bold">
                 <button
@@ -412,6 +404,37 @@
                   >
                 </button>
               </li>
+              <li class="colHeader font-semibold"></li>
+              <li class="colHeader font-semibold">
+                <button
+                  class="underline decoration-dotted hover:text-blue-300"
+                  data-sort="driver.forename"
+                >
+                  FName
+                  <span class="upArrow hidden data-[visible=1]:inline"
+                    >&#x2B06;</span
+                  ><span class="downArrow hidden data-[visible=1]:inline"
+                    >&#x2B07;</span
+                  >
+                </button>
+              </li>
+              <li class="colHeader font-semibold">
+                <button
+                  class="underline decoration-dotted hover:text-blue-300"
+                  data-sort="driver.surname"
+                >
+                  LName
+                  <span class="upArrow hidden data-[visible=1]:inline"
+                    >&#x2B06;</span
+                  ><span class="downArrow hidden data-[visible=1]:inline"
+                    >&#x2B07;</span
+                  >
+                </button>
+              </li>
+              <li class="colHeader font-semibold"></li>
+              <li class="colHeader font-semibold"></li>
+              <li class="colHeader font-semibold"></li>
+              <li class="colHeader font-semibold"></li>
             </ul>
           </section>
           <section>
@@ -435,18 +458,10 @@
                   >
                 </button>
               </li>
-              <li class="colHeader font-bold">
-                <button
-                  class="underline decoration-dotted hover:text-blue-300"
-                  data-sort="driverName"
-                >
-                  Name
-                  <span class="upArrow hidden data-[visible=1]:inline"
-                    >&#x2B06;</span
-                  ><span class="downArrow hidden data-[visible=1]:inline"
-                    >&#x2B07;</span
-                  >
-                </button>
+              <li
+                class="colHeader col-span-2 cursor-not-allowed font-bold underline decoration-solid hover:text-gray-500"
+              >
+                Driver
               </li>
               <li class="colHeader font-bold">
                 <button
@@ -487,6 +502,36 @@
                   >
                 </button>
               </li>
+              <li class="colHeader font-semibold"></li>
+              <li class="colHeader font-semibold">
+                <button
+                  class="underline decoration-dotted hover:text-blue-300"
+                  data-sort="driver.forename"
+                >
+                  FName
+                  <span class="upArrow hidden data-[visible=1]:inline"
+                    >&#x2B06;</span
+                  ><span class="downArrow hidden data-[visible=1]:inline"
+                    >&#x2B07;</span
+                  >
+                </button>
+              </li>
+              <li class="colHeader font-semibold">
+                <button
+                  class="underline decoration-dotted hover:text-blue-300"
+                  data-sort="driver.surname"
+                >
+                  LName
+                  <span class="upArrow hidden data-[visible=1]:inline"
+                    >&#x2B06;</span
+                  ><span class="downArrow hidden data-[visible=1]:inline"
+                    >&#x2B07;</span
+                  >
+                </button>
+              </li>
+              <li class="colHeader font-semibold"></li>
+              <li class="colHeader font-semibold"></li>
+              <li class="colHeader font-semibold"></li>
             </ul>
             <table
               class="border-separate border-spacing-1 text-center text-sm lg:text-base xl:border-spacing-3"

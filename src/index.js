@@ -401,22 +401,21 @@ document.addEventListener("DOMContentLoaded", () => {
     clearNonHeaderRows(list);
 
     const qualRaceData = data.filter((qual) => qual.race.id == raceID);
-    qualRaceData.forEach(
-      (qual) =>
-        (qual.driverName = `${qual.driver.forename} ${qual.driver.surname}`),
-    );
 
     sortTabularData(qualRaceData, sortCol, descending).forEach((qual) => {
       const position = document.createElement("li");
       position.textContent = qual.position;
       list.appendChild(position);
 
-      const driver = document.createElement("li");
-      const driverBtn = createTextButton(
-        `${qual.driver.forename} ${qual.driver.surname}`,
-      );
-      driver.appendChild(driverBtn);
-      list.appendChild(driver);
+      const driverFName = document.createElement("li");
+      const driverFNameBtn = createTextButton(qual.driver.forename);
+      driverFName.appendChild(driverFNameBtn);
+      list.appendChild(driverFName);
+
+      const driverLName = document.createElement("li");
+      const driverLNameBtn = createTextButton(qual.driver.surname);
+      driverLName.appendChild(driverLNameBtn);
+      list.appendChild(driverLName);
 
       const constructor = document.createElement("li");
       const constBtn = createTextButton(qual.constructor.name);
