@@ -131,6 +131,14 @@
                   by bruwlstars.</a
                 >
               </li>
+              <li class="has-[a:hover]:before:content-['\25C8']">
+                <a
+                  class="text-white underline decoration-dotted underline-offset-4 hover:text-blue-300 hover:visited:text-red-300"
+                  href="https://tenor.com/view/biker-cat-cat-driving-cute-gif-14420963"
+                  ><strong>Motorcycle Cat GIF</strong> came from Tenor and was
+                  uploaded by diegokunz.</a
+                >
+              </li>
             </ul>
           </section>
 
@@ -269,10 +277,35 @@
             <li class="colHeader font-bold"></li>
           </ul>
         </section>
-        <section class="hidden" id="noRaceResults">
-          Pick which Race you want displayed.
+        <section class="block peer-data-[visible=1]:hidden" id="noRaceResults">
+          <h2
+            class="text-wrap text-center text-xl font-semibold capitalize tracking-wide"
+          >
+            Kitty is Watching You! 😏
+          </h2>
+          <a
+            href="https://tenor.com/view/biker-cat-cat-driving-cute-gif-14420963"
+          >
+            <figure class="grid justify-center">
+              <img
+                src="Images/biker-cat.gif"
+                width="480"
+                height="480"
+                alt="Cat driving a bike and staring out of the screen"
+                title="😟"
+              />
+              <figcaption
+                class="text-wrap text-center text-xl font-medium tracking-wide"
+              >
+                Kitty will stare at you until you pick a race!
+              </figcaption>
+            </figure>
+          </a>
         </section>
-        <section class="grid grid-cols-2 gap-y-8" id="raceResults">
+        <section
+          class="peer hidden grid-cols-2 gap-y-8 data-[visible=1]:grid"
+          id="raceResults"
+        >
           <section
             class="grid-cols-max-3 col-span-2 grid justify-center gap-1 text-balance text-center text-lg font-semibold lg:text-xl"
             id="raceInfoBlock"
