@@ -108,6 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
         F1.state.hide("main > *");
         F1.notification.clearAll();
         F1.state.show("#mainLoading");
+        resetBrowseView();
 
         setTimeout(() => {
           F1.state.hide("#mainLoading");
@@ -189,6 +190,8 @@ document.addEventListener("DOMContentLoaded", () => {
         raceID,
         qualifyingTable.querySelector('[data-sort = "position"]'),
       );
+
+      F1.state.show("#raceResults");
     }
   });
 
@@ -213,6 +216,16 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     }
   });
+
+  /*
+   * Purpose: Resets the browse view.
+   */
+  function resetBrowseView() {
+    F1.state.hide("#raceResults");
+    racesTable.dataset.currSort = "";
+    qualifyingTable.dataset.currSort = "";
+    resultsTable.dataset.currSort = "";
+  }
 
   /*
    * Purpose: To show information on the given race to the user.
@@ -314,7 +327,7 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   function updateSortArrow(list, sortColElm, descend) {
     list
-      .querySelectorAll(`[data-sort = "${list.dataset.currSort}"] > *`)
+      .querySelectorAll(".upArrow, .downArrow")
       .forEach((arrow) => (arrow.dataset.visible = "0"));
 
     sortColElm.querySelector(
