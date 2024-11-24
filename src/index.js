@@ -206,6 +206,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  qualifyingTable.addEventListener("click", (e) => {
+    if (e.target.dataset.constructorID) {
+      showConstructorDialog();
+    }
+  });
+
+  qualifyingTable.addEventListener("click", (e) => {
+    if (e.target.dataset.driverID) {
+      showDriverDialog();
+    }
+  });
+
   resultsTable.addEventListener("click", (e) => {
     if (e.target.dataset.sort) {
       populateResults(
@@ -216,6 +228,39 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     }
   });
+
+  resultsTable.addEventListener("click", (e) => {
+    if (e.target.dataset.constructorID) {
+      showConstructorDialog();
+    }
+  });
+
+  resultsTable.addEventListener("click", (e) => {
+    if (e.target.dataset.driverID) {
+      showDriverDialog();
+    }
+  });
+
+  document.querySelector("#circuitBtn").addEventListener("click", (e) => {
+    if (e.currentTarget.dataset.circuitID) {
+      showCircuitDialog();
+    }
+  });
+
+  function showConstructorDialog(constructorData, resultsData) {
+    const dialog = document.querySelector("#constructor");
+    dialog.showModal();
+  }
+
+  function showDriverDialog(driverData) {
+    const dialog = document.querySelector("#driver");
+    dialog.showModal();
+  }
+
+  function showCircuitDialog(circuitData) {
+    const dialog = document.querySelector("#circuit");
+    dialog.showModal();
+  }
 
   /*
    * Purpose: Resets the browse view.
@@ -515,6 +560,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const driverFNameBtn = createTextButton(driver.forename);
     const driverLNameBtn = createTextButton(driver.surname);
 
+    driverFNameBtn.dataset.driverID = driver.id;
+    driverLNameBtn.dataset.driverID = driver.id;
+
     appendNode(list, driverFNameBtn, ...classes);
     appendNode(list, driverLNameBtn, ...classes);
 
@@ -531,6 +579,7 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   function appendConstructorName(list, constructor, ...classes) {
     const constBtn = createTextButton(constructor.name);
+    constBtn.dataset.constructorID = constructor.id;
     return appendNode(list, constBtn, ...classes);
   }
 
