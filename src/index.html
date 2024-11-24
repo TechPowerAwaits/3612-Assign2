@@ -276,12 +276,13 @@
           class="grid grid-cols-2 grid-rows-[min-content_min-content] gap-y-8"
           id="raceResults"
         >
-          <hgroup
-            class="col-span-2 text-balance text-center text-lg font-semibold lg:text-xl"
+          <section
+            class="col-span-2 grid grid-cols-[max-content_max-content_max-content] justify-center gap-1 text-balance text-center text-lg font-semibold lg:text-xl"
             id="raceInfoBlock"
           >
+            <p>🏁</p>
             <h2>
-              🏁 <time id="raceYear"></time> <span id="raceName"></span> (Round
+              <time id="raceYear"></time> <span id="raceName"></span> (Round
               <span id="raceRound"></span>)
               <sup class="text-xs font-normal"
                 >[🌎<a
@@ -290,10 +291,11 @@
                   >extern</a
                 >🌎]</sup
               >
-              🏁
             </h2>
+            <p>🏁</p>
+            <p>🚀</p>
             <p>
-              🚀 In
+              In
               <button
                 id="circuitBtn"
                 class="underline decoration-dotted hover:text-blue-300 hover:visited:text-red-300"
@@ -308,10 +310,11 @@
                   >extern</a
                 >🌎]</sup
               >
-              🚀
             </p>
+            <p>🚀</p>
+            <p>📅</p>
             <p>
-              📅 <time id="raceDate"></time>
+              <time id="raceDate"></time>
               <sup class="text-xs font-normal"
                 >[🌎<a
                   id="dateLink"
@@ -319,9 +322,9 @@
                   >extern</a
                 >🌎]</sup
               >
-              📅
             </p>
-          </hgroup>
+            <p>📅</p>
+          </section>
 
           <section>
             <h3 class="text-center text-lg font-semibold lg:text-xl">
