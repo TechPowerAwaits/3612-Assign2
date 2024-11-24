@@ -173,6 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const raceID = e.target.dataset.raceID;
 
     if (e.target.dataset.raceID) {
+      resetBrowseView();
       qualifyingTable.dataset.raceID = raceID;
       resultsTable.dataset.raceID = raceID;
 
@@ -243,7 +244,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.querySelector("#circuitBtn").addEventListener("click", (e) => {
     if (e.currentTarget.dataset.circuitID) {
-      showCircuitDialog();
+      const circuitData = F1.data.current[F1.data.racesIdx].find(
+        (race) => race.circuit.id == e.currentTarget.dataset.circuitID,
+      ).circuit;
+      const dialog = document.querySelector("#circuit");
+      prepCircuitDialog(dialog, circuitData);
+      dialog.showModal();
     }
   });
 
@@ -257,9 +263,20 @@ document.addEventListener("DOMContentLoaded", () => {
     dialog.showModal();
   }
 
-  function showCircuitDialog(circuitData) {
-    const dialog = document.querySelector("#circuit");
-    dialog.showModal();
+  /*
+   * Purpose: Preps the circuit dialog with the provided data.
+   */
+  function prepCircuitDialog(dialog, circuitData) {
+    dialog.querySelector("#circuitDiagName").textContent = circuitData.name;
+    dialog.querySelector("#circuitDiagLocation").textContent =
+      circuitData.location;
+    dialog.querySelector("#circuitDiagCountry").textContent =
+      circuitData.country;
+    dialog.querySelector("#circuitDiagLat").textContent = circuitData.lat;
+    dialog.querySelector("#circuitDiagLng").textContent = circuitData.lng;
+    dialog
+      .querySelector("#circuitDiagURL")
+      .setAttribute("href", circuitData.url);
   }
 
   /*
