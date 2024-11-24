@@ -126,6 +126,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
       _racesSection: document.querySelector("#races"),
 
+      current: [],
+      racesIdx: 0,
+      qualifyingIdx: 1,
+      resultsIdx: 2,
+
       default_domain: "https://www.randyconnolly.com/funwebdev/3rd/api/f1",
 
       checkedFetch: async function (url) {
@@ -154,6 +159,401 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  const racesTable = F1.data._racesSection.querySelector("ul");
+  racesTable.addEventListener("click", (e) => {
+    if (e.target.dataset.sort) {
+      populateRaces(racesTable, F1.data.current[F1.data.racesIdx], e.target);
+    }
+  });
+
+  const qualifyingTable = document.querySelector("#qualifyingTable");
+  const resultsTable = document.querySelector("#resultsTable");
+  racesTable.addEventListener("click", (e) => {
+    const raceID = e.target.dataset.raceID;
+
+    if (e.target.dataset.raceID) {
+      qualifyingTable.dataset.raceID = raceID;
+      resultsTable.dataset.raceID = raceID;
+
+      setRaceInfoBlock(F1.data.current[F1.data.racesIdx], raceID);
+
+      populateQualifying(
+        qualifyingTable,
+        F1.data.current[F1.data.qualifyingIdx],
+        raceID,
+        qualifyingTable.querySelector('[data-sort = "position"]'),
+      );
+      populateResults(
+        resultsTable,
+        F1.data.current[F1.data.resultsIdx],
+        raceID,
+        qualifyingTable.querySelector('[data-sort = "position"]'),
+      );
+    }
+  });
+
+  qualifyingTable.addEventListener("click", (e) => {
+    if (e.target.dataset.sort) {
+      populateQualifying(
+        qualifyingTable,
+        F1.data.current[F1.data.qualifyingIdx],
+        qualifyingTable.dataset.raceID,
+        e.target,
+      );
+    }
+  });
+
+  resultsTable.addEventListener("click", (e) => {
+    if (e.target.dataset.sort) {
+      populateResults(
+        resultsTable,
+        F1.data.current[F1.data.resultsIdx],
+        resultsTable.dataset.raceID,
+        e.target,
+      );
+    }
+  });
+
+  /*
+   * Purpose: To show information on the given race to the user.
+   *
+   * Details: If the given raceID is invalid, fallback data will
+   * be displayed instead.
+   */
+  function setRaceInfoBlock(data, raceID) {
+    let info = data.find((elm) => elm.id == raceID);
+
+    if (!info) {
+      info = {
+        year: 1970,
+        round: 0,
+        name: "Unknown Race",
+        date: "1970-01-01",
+        url: "https://www.google.com/teapot",
+        circuit: {
+          id: 0,
+          name: "Unknown Circuit",
+          url: "https://music.youtube.com/watch?v=RQMpfnsi5Wk&si=o5evz6KvMoGK5hve",
+        },
+      };
+    }
+
+    document.querySelector("#raceLink").setAttribute("href", info.url);
+    document.querySelector("#raceYear").textContent = info.year;
+    document.querySelector("#raceName").textContent = info.name;
+    document.querySelector("#raceRound").textContent = info.round;
+    document.querySelector("#circuitBtn").dataset.circuitID = info.circuit.id;
+    document.querySelector("#circuitName").textContent = info.circuit.name;
+    document
+      .querySelector("#circuitLink")
+      .setAttribute("href", info.circuit.url);
+    document
+      .querySelector("#dateLink")
+      .setAttribute("href", genDateLink(info.date));
+    document.querySelector("#raceDate").textContent = info.date;
+
+    /*
+     * Purpose: To generate a URL to a webpage that contains information on the
+     * date provided.
+     *
+     * Details: The date provided must be a string and in the form: YYYY-MM-DD.
+     *
+     * Returns: A string containing a valid URL.
+     */
+    function genDateLink(date) {
+      const monthNumName = [
+        undefined,
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+      const baseUrl = "https://www.onthisday.com/date";
+      const [year, monthNumStr, day] = date.split("-");
+      const monthNum = Number.parseInt(monthNumStr);
+
+      return `${baseUrl}/${year}/${monthNumName[monthNum]}/${day}`;
+    }
+  }
+
+  /*
+   * Purpose: Determines if an upcoming sort operation should be ascending or descending.
+   *
+   * Details: The provided list object is modified to keep track of when a sort was last
+   * descending. Sorting is guaranteed ascending by default except for every second
+   * consecutive operation to sort by the same column.
+   *
+   * Returns: True if the sort operation should be descending. False otherwise.
+   */
+  function shouldSortDescend(list, sortCol) {
+    const sameAsPrev = sortCol === list.dataset.currSort;
+    let descending = false;
+
+    if (list.dataset.descending === "1" || !sameAsPrev) {
+      descending = false;
+      list.dataset.descending = "0";
+    } else {
+      descending = true;
+      list.dataset.descending = "1";
+    }
+
+    return descending;
+  }
+
+  /*
+   * Purpose: Updates the arrows representing the sorting direction in the
+   * given list.
+   */
+  function updateSortArrow(list, sortColElm, descend) {
+    list
+      .querySelectorAll(`[data-sort = "${list.dataset.currSort}"] > *`)
+      .forEach((arrow) => (arrow.dataset.visible = "0"));
+
+    sortColElm.querySelector(
+      descend ? ".upArrow" : ".downArrow",
+    ).dataset.visible = "1";
+  }
+
+  /*
+   * Purpose: To clear all non-header rows in the given list.
+   */
+  function clearNonHeaderRows(list) {
+    list
+      .querySelectorAll(":not(.colHeader):is(li)")
+      .forEach((cell) => (cell.outerHTML = ""));
+  }
+
+  /*
+   * Purpose: To sort the content of the given array by the provided column name.
+   *
+   * Details: By default, data will be sorted in ascending order. The original
+   * array is left untouched.
+   *
+   * If the attribute to sort by is not at the top-level of an object, the path to
+   * the target can be specified with dots. For instance, a sortCol value of
+   * "subobj.target" will result in a comparison with the target attribute inside
+   * the subobj to determine the ordering of the data.
+   *
+   * Returns: A sorted array of data.
+   */
+  function sortTabularData(data, sortCol, descending = false) {
+    const colPathSep = ".";
+    const colPath = sortCol.split(colPathSep);
+
+    return data.toSorted((d1, d2) => {
+      let t1 = d1;
+      let t2 = d2;
+
+      for (let i = 0; i < colPath.length; i++) {
+        t1 = t1[colPath[i]];
+        t2 = t2[colPath[i]];
+      }
+
+      return (descending ? -1 : 1) * (t1 > t2 ? 1 : t1 < t2 ? -1 : 0);
+    });
+  }
+
+  /*
+   * Purpose: Populates all the race information into the races table.
+   */
+  function populateRaces(list, data, sortColElm) {
+    const sortCol = sortColElm.dataset.sort;
+    const descending = shouldSortDescend(list, sortCol);
+
+    updateSortArrow(list, sortColElm, descending);
+    clearNonHeaderRows(list);
+
+    sortTabularData(data, sortCol, descending).forEach((race) => {
+      appendText(list, race.round);
+      appendText(list, race.name);
+
+      const btn = createArrowButton();
+      btn.dataset.raceID = race.id;
+      appendNode(list, btn);
+    });
+
+    list.dataset.currSort = sortCol;
+  }
+
+  /*
+   * Purpose: Populates all the qualifying information for the given race into the qualifying
+   * table.
+   */
+  function populateQualifying(list, data, raceID, sortColElm) {
+    const sortCol = sortColElm.dataset.sort;
+    const descending = shouldSortDescend(list, sortCol);
+
+    updateSortArrow(list, sortColElm, descending);
+    clearNonHeaderRows(list);
+
+    const qualRaceData = data.filter((qual) => qual.race.id == raceID);
+
+    sortTabularData(qualRaceData, sortCol, descending).forEach((qual) => {
+      appendText(list, qual.position);
+      appendDriverName(list, qual.driver);
+      appendConstructorName(list, qual.constructor);
+      appendText(list, qual.q1 ? qual.q1 : "N/A");
+      appendText(list, qual.q2 ? qual.q2 : "N/A");
+      appendText(list, qual.q3 ? qual.q3 : "N/A");
+    });
+
+    list.dataset.currSort = sortCol;
+  }
+
+  /*
+   * Purpose: Populates all the results information for the given race into the results
+   * table.
+   */
+  function populateResults(list, data, raceID, sortColElm) {
+    const sortCol = sortColElm.dataset.sort;
+    const descending = shouldSortDescend(list, sortCol);
+
+    updateSortArrow(list, sortColElm, descending);
+    clearNonHeaderRows(list);
+
+    const resultRaceData = data.filter((qual) => qual.race.id == raceID);
+
+    sortTabularData(resultRaceData, sortCol, descending).forEach((result) => {
+      appendPositionNode(result.position);
+      const styleClasses = getPositionStyling(result.position);
+
+      appendDriverName(list, result.driver, ...styleClasses);
+      appendConstructorName(list, result.constructor, ...styleClasses);
+      appendText(list, result.laps, ...styleClasses);
+      appendText(list, result.points, ...styleClasses);
+    });
+
+    list.dataset.currSort = sortCol;
+
+    /*
+     * Purpose: Appends a newly-created node representing a position.
+     *
+     * Returns: The created node.
+     */
+    function appendPositionNode(position) {
+      const specialPositions = 3;
+      const styling = "text-3xl";
+
+      let createdNode;
+
+      switch (position) {
+        case 1:
+          createdNode = appendText(list, "🥇");
+          break;
+        case 2:
+          createdNode = appendText(list, "🥈");
+          break;
+        case 3:
+          createdNode = appendText(list, "🥉");
+          break;
+        default:
+          createdNode = appendText(list, position);
+      }
+
+      if (position <= specialPositions) {
+        createdNode.classList.add(styling);
+      }
+
+      return createdNode;
+    }
+
+    /*
+     * Purpose: To get a list of style classes to be applied to nodes based on
+     * the provided position.
+     *
+     * Returns: An array of strings.
+     */
+    function getPositionStyling(position) {
+      let styleClasses = [];
+
+      switch (position) {
+        case 1:
+          styleClasses = ["text-yellow-500"];
+          break;
+        case 2:
+          styleClasses = ["text-stone-300"];
+          break;
+        case 3:
+          styleClasses = ["text-orange-500"];
+          break;
+      }
+
+      return styleClasses;
+    }
+  }
+
+  /*
+   * Purpose: Appends the given driver to the provided list.
+   *
+   * Details: Classes to add to the generated nodes can be provided at the end of
+   * the parameter list.
+   *
+   * Returns: An array of the nodes created.
+   */
+  function appendDriverName(list, driver, ...classes) {
+    const driverFNameBtn = createTextButton(driver.forename);
+    const driverLNameBtn = createTextButton(driver.surname);
+
+    appendNode(list, driverFNameBtn, ...classes);
+    appendNode(list, driverLNameBtn, ...classes);
+
+    return [driverFNameBtn, driverLNameBtn];
+  }
+
+  /*
+   * Purpose: Appends the given constructor to the provided list.
+   *
+   * Details: Classes to add to the generated node can be provided at the end of
+   * the parameter list.
+   *
+   * Returns: The created node that stores the constructor's name.
+   */
+  function appendConstructorName(list, constructor, ...classes) {
+    const constBtn = createTextButton(constructor.name);
+    return appendNode(list, constBtn, ...classes);
+  }
+
+  /*
+   * Purpose: Appends the given node onto a list.
+   *
+   * Details: Classes to add to the node can be provided at the end of
+   * the parameter list.
+   *
+   * Returns: The given node.
+   */
+  function appendNode(list, node, ...classes) {
+    const nodeWrapper = document.createElement("li");
+
+    classes.forEach((nodeClass) => node.classList.add(nodeClass));
+
+    nodeWrapper.appendChild(node);
+    list.appendChild(nodeWrapper);
+
+    return node;
+  }
+
+  /*
+   * Purpose: Appends the given text onto a list inside a wrapper element.
+   *
+   * Details: Classes to add to the generated node can be provided at the end of
+   * the parameter list.
+   *
+   * Returns: The element containing the text.
+   */
+  function appendText(list, text, ...classes) {
+    const textWrapper = document.createElement("span");
+    textWrapper.textContent = text;
+    return appendNode(list, textWrapper, ...classes);
+  }
+
   /*
    * Details: It is assumed that the retrieved data is unsorted.
    */
@@ -165,9 +565,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const dataID = `allRaceData${year}`;
 
-    const racesIdx = 0;
-    const qualifyingIdx = 1;
-
     let data = localStorage.getItem(dataID);
 
     if (!data) {
@@ -175,21 +572,15 @@ document.addEventListener("DOMContentLoaded", () => {
         data = await Promise.all([
           F1.data.checkedFetch(`${domain}/races.php?season=${year}`),
           F1.data.checkedFetch(`${domain}/qualifying.php?season=${year}`),
+          F1.data.checkedFetch(`${domain}/results.php?season=${year}`),
         ]);
 
-        if (data[racesIdx].error) {
-          throw new Error(data[racesIdx].error.message);
-        }
+        data.forEach((dataset) => {
+          if (dataset.error) {
+            throw new Error(dataset.error.message);
+          }
+        });
 
-        data[racesIdx].sort((r1, r2) => r1.round - r2.round);
-
-        if (data[qualifyingIdx].error) {
-          throw new Error(data[qualifyingIdx].error.message);
-        }
-
-        data[qualifyingIdx].sort((q1, q2) => q1.position - q2.position);
-
-        data.sort((r1, r2) => r1.round - r2.round);
         localStorage.setItem(dataID, JSON.stringify(data));
       } catch (error) {
         F1.state.switchToHome();
@@ -201,7 +592,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (data) {
-      populateRaces(selSeason.value, data[racesIdx]);
+      F1.data.current = data;
+
+      const h2 = F1.data._racesSection.querySelector("h2");
+      const h2Text = h2.textContent.replace("[year]", year);
+      h2.textContent = h2Text;
+
+      populateRaces(
+        racesTable,
+        data[F1.data.racesIdx],
+        racesTable.querySelector('[data-sort = "round"]'),
+      );
+
       F1.state.hide("#mainLoading");
       F1.state.show("#browse");
       F1.state.logoButton.removeAttribute("disabled");
@@ -210,37 +612,45 @@ document.addEventListener("DOMContentLoaded", () => {
     selSeason.value = "";
   }
 
-  function populateRaces(year, racesData) {
-    const racesTable = F1.data._racesTemplate.content.cloneNode(true);
+  /*
+   * Purpose: Creates and returns a small button with a right-facing arrow.
+   *
+   * Details: The created element is not added to the DOM.
+   *
+   * Returns: A (very pretty) button.
+   */
+  function createArrowButton() {
+    const btn = document.createElement("button");
 
-    const h2 = racesTable.querySelector("h2");
-    const h2Text = h2.textContent.replace("[year]", year);
-    h2.textContent = h2Text;
+    btn.textContent = ">";
+    btn.setAttribute("type", "button");
+    btn.classList.add(
+      "rounded-sm",
+      "bg-slate-500",
+      "px-1",
+      "hover:bg-blue-300",
+    );
 
-    const tableBody = racesTable.querySelector("tbody");
-
-    racesData.forEach((race) => {
-      const rnd = document.createElement("td");
-      rnd.textContent = race.round;
-
-      const name = document.createElement("td");
-      name.textContent = race.name;
-
-      const btnWrapper =
-        F1.data._racesResultsBtnTemplate.content.cloneNode(true);
-      btnWrapper.querySelector("button").dataset.racesId = race.id;
-
-      const tr = document.createElement("tr");
-      tr.appendChild(rnd);
-      tr.appendChild(name);
-      tr.appendChild(btnWrapper);
-
-      tableBody.appendChild(tr);
-    });
-
-    F1.data._racesSection.innerHTML = "";
-    F1.data._racesSection.appendChild(racesTable);
+    return btn;
   }
 
   F1.state.switchToHome();
 });
+
+/*
+ * Purpose: Creates and returns a styled text-based button with the given
+ * button.
+ *
+ * Details: The created element is not added to the DOM.
+ *
+ * Returns: A (hyperlink-looking) button.
+ */
+function createTextButton(text) {
+  const btn = document.createElement("button");
+
+  btn.textContent = text;
+  btn.setAttribute("type", "button");
+  btn.classList.add("underline", "decoration-dotted", "hover:text-blue-300");
+
+  return btn;
+}

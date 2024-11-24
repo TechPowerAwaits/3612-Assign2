@@ -232,167 +232,304 @@
         class="hidden grid-flow-col p-1 data-[visible=1]:grid"
         id="browse"
       >
-        <section id="races"></section>
+        <section id="races">
+          <h2 class="text-center text-lg font-semibold lg:text-xl">
+            [year] Races
+          </h2>
+          <ul
+            class="grid-cols-max-3 grid grid-flow-row justify-center gap-1 text-center"
+            id="racesTable"
+          >
+            <li class="colHeader font-bold">
+              <button
+                class="underline decoration-dotted hover:text-blue-300"
+                data-sort="round"
+              >
+                Rnd
+                <span class="upArrow hidden data-[visible=1]:inline"
+                  >&#x2B06;</span
+                ><span class="downArrow hidden data-[visible=1]:inline"
+                  >&#x2B07;</span
+                >
+              </button>
+            </li>
+            <li class="colHeader font-bold">
+              <button
+                class="underline decoration-dotted hover:text-blue-300"
+                data-sort="name"
+              >
+                Name
+                <span class="upArrow hidden data-[visible=1]:inline"
+                  >&#x2B06;</span
+                ><span class="downArrow hidden data-[visible=1]:inline"
+                  >&#x2B07;</span
+                >
+              </button>
+            </li>
+            <li class="colHeader font-bold"></li>
+          </ul>
+        </section>
         <section class="hidden" id="noRaceResults">
           Pick which Race you want displayed.
         </section>
-        <section
-          class="grid grid-cols-2 grid-rows-[min-content_min-content] gap-y-8"
-          id="raceResults"
-        >
-          <hgroup
-            class="col-span-2 text-balance text-center text-lg font-semibold lg:text-xl"
+        <section class="grid grid-cols-2 gap-y-8" id="raceResults">
+          <section
+            class="grid-cols-max-3 col-span-2 grid justify-center gap-1 text-balance text-center text-lg font-semibold lg:text-xl"
+            id="raceInfoBlock"
           >
+            <p>🏁</p>
             <h2>
-              🏁
-              <a
-                class="underline decoration-dotted hover:text-blue-300 hover:visited:text-red-300"
-                href="https://en.wikipedia.org/wiki/2023_Bahrain_Grand_Prix"
-                >2023 Bahrain Grand Prix</a
+              <time id="raceYear"></time> <span id="raceName"></span> (Round
+              <span id="raceRound"></span>)
+              <sup class="text-xs font-normal"
+                >[🌎<a
+                  id="raceLink"
+                  class="underline decoration-dotted hover:text-blue-300 hover:visited:text-red-300"
+                  >extern</a
+                >🌎]</sup
               >
-              (Round 1) 🏁
             </h2>
+            <p>🏁</p>
+            <p>🚀</p>
             <p>
-              🌎 In
-              <a
+              In
+              <button
+                id="circuitBtn"
                 class="underline decoration-dotted hover:text-blue-300 hover:visited:text-red-300"
-                href="http://en.wikipedia.org/wiki/Bahrain_International_Circuit"
-                >Bahrain International Circuit</a
-              >! 🌎
-            </p>
-            <p>
-              📅
-              <a
-                class="underline decoration-dotted hover:text-blue-300 hover:visited:text-red-300"
-                href="https://www.onthisday.com/date/2023/march/5"
-                ><time>2023-03-05</time></a
+                type="button"
               >
-              📅
+                <span id="circuitName"></span></button
+              >!
+              <sup class="text-xs font-normal"
+                >[🌎<a
+                  id="circuitLink"
+                  class="underline decoration-dotted hover:text-blue-300 hover:visited:text-red-300"
+                  >extern</a
+                >🌎]</sup
+              >
             </p>
-          </hgroup>
+            <p>🚀</p>
+            <p>📅</p>
+            <p>
+              <time id="raceDate"></time>
+              <sup class="text-xs font-normal"
+                >[🌎<a
+                  id="dateLink"
+                  class="underline decoration-dotted hover:text-blue-300 hover:visited:text-red-300"
+                  >extern</a
+                >🌎]</sup
+              >
+            </p>
+            <p>📅</p>
+          </section>
 
           <section>
-            <h3 class="text-center text-lg font-medium">Qualifying</h3>
-            <table
-              class="border-separate border-spacing-1 text-center text-sm lg:text-base xl:border-spacing-3"
+            <h3 class="text-center text-lg font-semibold lg:text-xl">
+              Qualifying
+            </h3>
+            <ul
+              class="grid-cols-max-7 grid grid-flow-row justify-center gap-1 text-center"
+              id="qualifyingTable"
             >
-              <thead>
-                <tr>
-                  <th scope="col">Pos</th>
-                  <th scope="col">Name</th>
-                  <th class="max-w-[5ch] truncate" scope="col">Constructor</th>
-                  <th scope="col">Q1</th>
-                  <th scope="col">Q2</th>
-                  <th scope="col">Q3</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1</td>
-                  <td
-                    class="underline decoration-dotted hover:text-blue-300"
-                    data-id="830"
+              <li class="colHeader font-bold">
+                <button
+                  class="underline decoration-dotted hover:text-blue-300"
+                  data-sort="position"
+                >
+                  Pos
+                  <span class="upArrow hidden data-[visible=1]:inline"
+                    >&#x2B06;</span
+                  ><span class="downArrow hidden data-[visible=1]:inline"
+                    >&#x2B07;</span
                   >
-                    Max Verstappen
-                  </td>
-                  <td
-                    class="underline decoration-dotted hover:text-blue-300"
-                    data-id="9"
+                </button>
+              </li>
+              <li
+                class="colHeader col-span-2 cursor-not-allowed font-bold underline decoration-solid hover:text-gray-500"
+              >
+                Driver
+              </li>
+              <li class="colHeader font-bold">
+                <button
+                  class="underline decoration-dotted hover:text-blue-300"
+                  data-sort="constructor.name"
+                >
+                  Const
+                  <span class="upArrow hidden data-[visible=1]:inline"
+                    >&#x2B06;</span
+                  ><span class="downArrow hidden data-[visible=1]:inline"
+                    >&#x2B07;</span
                   >
-                    Red Bull
-                  </td>
-                  <td>01:31.3</td>
-                  <td>01:30.5</td>
-                  <td>01:29.7</td>
-                </tr>
-              </tbody>
-            </table>
+                </button>
+              </li>
+              <li class="colHeader font-bold">
+                <button
+                  class="underline decoration-dotted hover:text-blue-300"
+                  data-sort="q1"
+                >
+                  Q1
+                  <span class="upArrow hidden data-[visible=1]:inline"
+                    >&#x2B06;</span
+                  ><span class="downArrow hidden data-[visible=1]:inline"
+                    >&#x2B07;</span
+                  >
+                </button>
+              </li>
+              <li class="colHeader font-bold">
+                <button
+                  class="underline decoration-dotted hover:text-blue-300"
+                  data-sort="q2"
+                >
+                  Q2
+                  <span class="upArrow hidden data-[visible=1]:inline"
+                    >&#x2B06;</span
+                  ><span class="downArrow hidden data-[visible=1]:inline"
+                    >&#x2B07;</span
+                  >
+                </button>
+              </li>
+              <li class="colHeader font-bold">
+                <button
+                  class="underline decoration-dotted hover:text-blue-300"
+                  data-sort="q3"
+                >
+                  Q3
+                  <span class="upArrow hidden data-[visible=1]:inline"
+                    >&#x2B06;</span
+                  ><span class="downArrow hidden data-[visible=1]:inline"
+                    >&#x2B07;</span
+                  >
+                </button>
+              </li>
+              <li class="colHeader font-semibold"></li>
+              <li class="colHeader font-semibold">
+                <button
+                  class="underline decoration-dotted hover:text-blue-300"
+                  data-sort="driver.forename"
+                >
+                  FName
+                  <span class="upArrow hidden data-[visible=1]:inline"
+                    >&#x2B06;</span
+                  ><span class="downArrow hidden data-[visible=1]:inline"
+                    >&#x2B07;</span
+                  >
+                </button>
+              </li>
+              <li class="colHeader font-semibold">
+                <button
+                  class="underline decoration-dotted hover:text-blue-300"
+                  data-sort="driver.surname"
+                >
+                  LName
+                  <span class="upArrow hidden data-[visible=1]:inline"
+                    >&#x2B06;</span
+                  ><span class="downArrow hidden data-[visible=1]:inline"
+                    >&#x2B07;</span
+                  >
+                </button>
+              </li>
+              <li class="colHeader font-semibold"></li>
+              <li class="colHeader font-semibold"></li>
+              <li class="colHeader font-semibold"></li>
+              <li class="colHeader font-semibold"></li>
+            </ul>
           </section>
           <section>
-            <h3 class="text-center text-lg font-medium">Results</h3>
-            <table
-              class="border-separate border-spacing-1 text-center text-sm lg:text-base xl:border-spacing-3"
+            <h3 class="text-center text-lg font-semibold lg:text-xl">
+              Results
+            </h3>
+            <ul
+              class="grid-cols-max-6 grid grid-flow-row justify-center gap-1 text-center"
+              id="resultsTable"
             >
-              <thead>
-                <tr>
-                  <th scope="col">Pos</th>
-                  <th scope="col">Name</th>
-                  <th class="max-w-[5ch] truncate" scope="col">Constructor</th>
-                  <th scope="col">Laps</th>
-                  <th scope="col">Pts</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="text-yellow-500">
-                  <td class="text-base lg:text-3xl">🥇</td>
-                  <td
-                    class="underline decoration-dotted hover:text-blue-300"
-                    data-id="830"
+              <li class="colHeader font-bold">
+                <button
+                  class="underline decoration-dotted hover:text-blue-300"
+                  data-sort="position"
+                >
+                  Pos
+                  <span class="upArrow hidden data-[visible=1]:inline"
+                    >&#x2B06;</span
+                  ><span class="downArrow hidden data-[visible=1]:inline"
+                    >&#x2B07;</span
                   >
-                    Max Verstappen
-                  </td>
-                  <td
-                    class="underline decoration-dotted hover:text-blue-300"
-                    data-id="9"
+                </button>
+              </li>
+              <li
+                class="colHeader col-span-2 cursor-not-allowed font-bold underline decoration-solid hover:text-gray-500"
+              >
+                Driver
+              </li>
+              <li class="colHeader font-bold">
+                <button
+                  class="underline decoration-dotted hover:text-blue-300"
+                  data-sort="constructor.name"
+                >
+                  Const
+                  <span class="upArrow hidden data-[visible=1]:inline"
+                    >&#x2B06;</span
+                  ><span class="downArrow hidden data-[visible=1]:inline"
+                    >&#x2B07;</span
                   >
-                    Red Bull
-                  </td>
-                  <td>57</td>
-                  <td>25</td>
-                </tr>
-                <tr class="text-stone-300">
-                  <td class="text-base lg:text-3xl">🥈</td>
-                  <td
-                    class="underline decoration-dotted hover:text-blue-300"
-                    data-id="830"
+                </button>
+              </li>
+              <li class="colHeader font-bold">
+                <button
+                  class="underline decoration-dotted hover:text-blue-300"
+                  data-sort="laps"
+                >
+                  Laps
+                  <span class="upArrow hidden data-[visible=1]:inline"
+                    >&#x2B06;</span
+                  ><span class="downArrow hidden data-[visible=1]:inline"
+                    >&#x2B07;</span
                   >
-                    Max Verstappen
-                  </td>
-                  <td
-                    class="underline decoration-dotted hover:text-blue-300"
-                    data-id="9"
+                </button>
+              </li>
+              <li class="colHeader font-bold">
+                <button
+                  class="underline decoration-dotted hover:text-blue-300"
+                  data-sort="points"
+                >
+                  Pts
+                  <span class="upArrow hidden data-[visible=1]:inline"
+                    >&#x2B06;</span
+                  ><span class="downArrow hidden data-[visible=1]:inline"
+                    >&#x2B07;</span
                   >
-                    Red Bull
-                  </td>
-                  <td>57</td>
-                  <td>25</td>
-                </tr>
-                <tr class="text-orange-500">
-                  <td class="text-base lg:text-3xl">🥉</td>
-                  <td
-                    class="underline decoration-dotted hover:text-blue-300"
-                    data-id="830"
+                </button>
+              </li>
+              <li class="colHeader font-semibold"></li>
+              <li class="colHeader font-semibold">
+                <button
+                  class="underline decoration-dotted hover:text-blue-300"
+                  data-sort="driver.forename"
+                >
+                  FName
+                  <span class="upArrow hidden data-[visible=1]:inline"
+                    >&#x2B06;</span
+                  ><span class="downArrow hidden data-[visible=1]:inline"
+                    >&#x2B07;</span
                   >
-                    Max Verstappen
-                  </td>
-                  <td
-                    class="underline decoration-dotted hover:text-blue-300"
-                    data-id="9"
+                </button>
+              </li>
+              <li class="colHeader font-semibold">
+                <button
+                  class="underline decoration-dotted hover:text-blue-300"
+                  data-sort="driver.surname"
+                >
+                  LName
+                  <span class="upArrow hidden data-[visible=1]:inline"
+                    >&#x2B06;</span
+                  ><span class="downArrow hidden data-[visible=1]:inline"
+                    >&#x2B07;</span
                   >
-                    Red Bull
-                  </td>
-                  <td>57</td>
-                  <td>25</td>
-                </tr>
-                <tr>
-                  <td>4</td>
-                  <td
-                    class="underline decoration-dotted hover:text-blue-300"
-                    data-id="830"
-                  >
-                    Max Verstappen
-                  </td>
-                  <td
-                    class="underline decoration-dotted hover:text-blue-300"
-                    data-id="9"
-                  >
-                    Red Bull
-                  </td>
-                  <td>57</td>
-                  <td>25</td>
-                </tr>
-              </tbody>
-            </table>
+                </button>
+              </li>
+              <li class="colHeader font-semibold"></li>
+              <li class="colHeader font-semibold"></li>
+              <li class="colHeader font-semibold"></li>
+            </ul>
           </section>
         </section>
       </article>
@@ -419,16 +556,6 @@
         </thead>
         <tbody></tbody>
       </table>
-    </template>
-    <template id="racesResultsBtnTemplate">
-      <td>
-        <button
-          class="rounded-sm bg-slate-500 px-1 hover:bg-blue-300"
-          type="button"
-        >
-          &rightarrow;
-        </button>
-      </td>
     </template>
   </body>
 </html>
