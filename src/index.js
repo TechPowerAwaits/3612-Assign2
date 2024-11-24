@@ -371,19 +371,12 @@ document.addEventListener("DOMContentLoaded", () => {
     clearNonHeaderRows(list);
 
     sortTabularData(data, sortCol, descending).forEach((race) => {
-      const round = document.createElement("li");
-      round.textContent = race.round;
-      list.appendChild(round);
+      appendText(list, race.round);
+      appendText(list, race.name);
 
-      const name = document.createElement("li");
-      name.textContent = race.name;
-      list.appendChild(name);
-
-      const btnWrapper = document.createElement("li");
       const btn = createArrowButton();
       btn.dataset.raceID = race.id;
-      btnWrapper.appendChild(btn);
-      list.appendChild(btnWrapper);
+      appendNode(list, btn);
     });
 
     list.dataset.currSort = sortCol;
@@ -403,24 +396,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const qualRaceData = data.filter((qual) => qual.race.id == raceID);
 
     sortTabularData(qualRaceData, sortCol, descending).forEach((qual) => {
-      const position = document.createElement("li");
-      position.textContent = qual.position;
-      list.appendChild(position);
-
+      appendText(list, qual.position);
       appendDriverName(list, qual.driver);
       appendConstructorName(list, qual.constructor);
-
-      const q1 = document.createElement("li");
-      q1.textContent = qual.q1;
-      list.appendChild(q1);
-
-      const q2 = document.createElement("li");
-      q2.textContent = qual.q2;
-      list.appendChild(q2);
-
-      const q3 = document.createElement("li");
-      q3.textContent = qual.q3;
-      list.appendChild(q3);
+      appendText(list, qual.q1 ? qual.q1 : "N/A");
+      appendText(list, qual.q2 ? qual.q2 : "N/A");
+      appendText(list, qual.q3 ? qual.q3 : "N/A");
     });
 
     list.dataset.currSort = sortCol;
@@ -430,25 +411,44 @@ document.addEventListener("DOMContentLoaded", () => {
    * Purpose: Appends the given driver to the provided list.
    */
   function appendDriverName(list, driver) {
-    const driverFName = document.createElement("li");
     const driverFNameBtn = createTextButton(driver.forename);
-    driverFName.appendChild(driverFNameBtn);
-    list.appendChild(driverFName);
-
-    const driverLName = document.createElement("li");
     const driverLNameBtn = createTextButton(driver.surname);
-    driverLName.appendChild(driverLNameBtn);
-    list.appendChild(driverLName);
+
+    appendNode(list, driverFNameBtn);
+    appendNode(list, driverLNameBtn);
   }
 
   /*
    * Purpose: Appends the given constructor to the provided list.
+   *
+   * Returns: The created node that stores the constructor's name.
    */
   function appendConstructorName(list, constructor) {
-    const constructorNode = document.createElement("li");
     const constBtn = createTextButton(constructor.name);
-    constructorNode.appendChild(constBtn);
-    list.appendChild(constructorNode);
+    return appendNode(list, constBtn);
+  }
+
+  /*
+   * Purpose: Appends the given node onto a list.
+   *
+   * Returns: The given node.
+   */
+  function appendNode(list, node) {
+    const nodeWrapper = document.createElement("li");
+
+    nodeWrapper.appendChild(node);
+    list.appendChild(nodeWrapper);
+
+    return node;
+  }
+
+  /*
+   * Purpose: Appends the given text onto a list as a node.
+   *
+   * Returns: The created text node.
+   */
+  function appendText(list, text) {
+    return appendNode(list, document.createTextNode(text));
   }
 
   /*
