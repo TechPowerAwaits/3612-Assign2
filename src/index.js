@@ -174,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
       qualifyingTable.dataset.raceID = raceID;
       // resultsTable.dataset.raceID = raceID;
 
-      setRaceInfoBlock(F1.data.current[F1.data.racesIdx]);
+      setRaceInfoBlock(F1.data.current[F1.data.racesIdx], raceID);
 
       populateQualifying(
         qualifyingTable,
