@@ -173,7 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (e.target.dataset.raceID) {
       qualifyingTable.dataset.raceID = raceID;
-      // resultsTable.dataset.raceID = raceID;
+      resultsTable.dataset.raceID = raceID;
 
       setRaceInfoBlock(F1.data.current[F1.data.racesIdx], raceID);
 
@@ -183,12 +183,12 @@ document.addEventListener("DOMContentLoaded", () => {
         raceID,
         qualifyingTable.querySelector('[data-sort = "position"]'),
       );
-      /*populateResults(
+      populateResults(
         resultsTable,
         F1.data.current[F1.data.resultsIdx],
         raceID,
-        e.target,
-      );*/
+        qualifyingTable.querySelector('[data-sort = "position"]'),
+      );
     }
   });
 
@@ -203,7 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  /*resultsTable.addEventListener("click", (e) => {
+  resultsTable.addEventListener("click", (e) => {
     if (e.target.dataset.sort) {
       populateResults(
         resultsTable,
@@ -212,7 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
         e.target,
       );
     }
-  });*/
+  });
 
   /*
    * Purpose: To show information on the given race to the user.
@@ -409,33 +409,130 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /*
-   * Purpose: Appends the given driver to the provided list.
+   * Purpose: Populates all the results information for the given race into the results
+   * table.
    */
-  function appendDriverName(list, driver) {
+  function populateResults(list, data, raceID, sortColElm) {
+    const sortCol = sortColElm.dataset.sort;
+    const descending = shouldSortDescend(list, sortCol);
+
+    updateSortArrow(list, sortColElm, descending);
+    clearNonHeaderRows(list);
+
+    const resultRaceData = data.filter((qual) => qual.race.id == raceID);
+
+    sortTabularData(resultRaceData, sortCol, descending).forEach((result) => {
+      appendPositionNode(result.position);
+      const styleClasses = getPositionStyling(result.position);
+
+      appendDriverName(list, result.driver, ...styleClasses);
+      appendConstructorName(list, result.constructor, ...styleClasses);
+      appendText(list, result.laps, ...styleClasses);
+      appendText(list, result.points, ...styleClasses);
+    });
+
+    list.dataset.currSort = sortCol;
+
+    /*
+     * Purpose: Appends a newly-created node representing a position.
+     *
+     * Returns: The created node.
+     */
+    function appendPositionNode(position) {
+      const specialPositions = 3;
+      const styling = "text-3xl";
+
+      let createdNode;
+
+      switch (position) {
+        case 1:
+          createdNode = appendText(list, "🥇");
+          break;
+        case 2:
+          createdNode = appendText(list, "🥈");
+          break;
+        case 3:
+          createdNode = appendText(list, "🥉");
+          break;
+        default:
+          createdNode = appendText(list, position);
+      }
+
+      if (position <= specialPositions) {
+        createdNode.classList.add(styling);
+      }
+
+      return createdNode;
+    }
+
+    /*
+     * Purpose: To get a list of style classes to be applied to nodes based on
+     * the provided position.
+     *
+     * Returns: An array of strings.
+     */
+    function getPositionStyling(position) {
+      let styleClasses = [];
+
+      switch (position) {
+        case 1:
+          styleClasses = ["text-yellow-500"];
+          break;
+        case 2:
+          styleClasses = ["text-stone-300"];
+          break;
+        case 3:
+          styleClasses = ["text-orange-500"];
+          break;
+      }
+
+      return styleClasses;
+    }
+  }
+
+  /*
+   * Purpose: Appends the given driver to the provided list.
+   *
+   * Details: Classes to add to the generated nodes can be provided at the end of
+   * the parameter list.
+   *
+   * Returns: An array of the nodes created.
+   */
+  function appendDriverName(list, driver, ...classes) {
     const driverFNameBtn = createTextButton(driver.forename);
     const driverLNameBtn = createTextButton(driver.surname);
 
-    appendNode(list, driverFNameBtn);
-    appendNode(list, driverLNameBtn);
+    appendNode(list, driverFNameBtn, ...classes);
+    appendNode(list, driverLNameBtn, ...classes);
+
+    return [driverFNameBtn, driverLNameBtn];
   }
 
   /*
    * Purpose: Appends the given constructor to the provided list.
    *
+   * Details: Classes to add to the generated node can be provided at the end of
+   * the parameter list.
+   *
    * Returns: The created node that stores the constructor's name.
    */
-  function appendConstructorName(list, constructor) {
+  function appendConstructorName(list, constructor, ...classes) {
     const constBtn = createTextButton(constructor.name);
-    return appendNode(list, constBtn);
+    return appendNode(list, constBtn, ...classes);
   }
 
   /*
    * Purpose: Appends the given node onto a list.
    *
+   * Details: Classes to add to the node can be provided at the end of
+   * the parameter list.
+   *
    * Returns: The given node.
    */
-  function appendNode(list, node) {
+  function appendNode(list, node, ...classes) {
     const nodeWrapper = document.createElement("li");
+
+    classes.forEach((nodeClass) => node.classList.add(nodeClass));
 
     nodeWrapper.appendChild(node);
     list.appendChild(nodeWrapper);
@@ -444,12 +541,17 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /*
-   * Purpose: Appends the given text onto a list as a node.
+   * Purpose: Appends the given text onto a list inside a wrapper element.
    *
-   * Returns: The created text node.
+   * Details: Classes to add to the generated node can be provided at the end of
+   * the parameter list.
+   *
+   * Returns: The element containing the text.
    */
-  function appendText(list, text) {
-    return appendNode(list, document.createTextNode(text));
+  function appendText(list, text, ...classes) {
+    const textWrapper = document.createElement("span");
+    textWrapper.textContent = text;
+    return appendNode(list, textWrapper, ...classes);
   }
 
   /*
