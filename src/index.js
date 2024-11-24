@@ -174,6 +174,8 @@ document.addEventListener("DOMContentLoaded", () => {
       qualifyingTable.dataset.raceID = raceID;
       // resultsTable.dataset.raceID = raceID;
 
+      setRaceInfoBlock(F1.data.current[F1.data.racesIdx]);
+
       populateQualifying(
         qualifyingTable,
         F1.data.current[F1.data.qualifyingIdx],
@@ -210,6 +212,76 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     }
   });*/
+
+  /*
+   * Purpose: To show information on the given race to the user.
+   *
+   * Details: If the given raceID is invalid, fallback data will
+   * be displayed instead.
+   */
+  function setRaceInfoBlock(data, raceID) {
+    let info = data.find((elm) => elm.id == raceID);
+
+    if (!info) {
+      info = {
+        year: 1970,
+        round: 0,
+        name: "Unknown Race",
+        date: "1970-01-01",
+        url: "https://www.google.com/teapot",
+        circuit: {
+          id: 0,
+          name: "Unknown Circuit",
+          url: "https://music.youtube.com/watch?v=RQMpfnsi5Wk&si=o5evz6KvMoGK5hve",
+        },
+      };
+    }
+
+    document.querySelector("#raceLink").setAttribute("href", info.url);
+    document.querySelector("#raceYear").textContent = info.year;
+    document.querySelector("#raceName").textContent = info.name;
+    document.querySelector("#raceRound").textContent = info.round;
+    document.querySelector("#circuitBtn").dataset.circuitID = info.circuit.id;
+    document.querySelector("#circuitName").textContent = info.circuit.name;
+    document
+      .querySelector("#circuitLink")
+      .setAttribute("href", info.circuit.url);
+    document
+      .querySelector("#dateLink")
+      .setAttribute("href", genDateLink(info.date));
+    document.querySelector("#raceDate").textContent = info.date;
+
+    /*
+     * Purpose: To generate a URL to a webpage that contains information on the
+     * date provided.
+     *
+     * Details: The date provided must be a string and in the form: YYYY-MM-DD.
+     *
+     * Returns: A string containing a valid URL.
+     */
+    function genDateLink(date) {
+      const monthNumName = [
+        undefined,
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+      const baseUrl = "https://www.onthisday.com/date";
+      const [year, monthNumStr, day] = date.split("-");
+      const monthNum = Number.parseInt(monthNumStr);
+
+      return `${baseUrl}/${year}/${monthNumName[monthNum]}/${day}`;
+    }
+  }
 
   /*
    * Purpose: Determines if an upcoming sort operation should be ascending or descending.
