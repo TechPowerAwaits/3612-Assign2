@@ -61,9 +61,6 @@ document.addEventListener("DOMContentLoaded", () => {
      * elements.
      */
     state: {
-      /* Purpose: To store a reference to the logo's button in the header. */
-      logoButton: document.querySelector("#logoButton"),
-
       /*
        * Purpose: Hides the elements selected by the given query.
        *
@@ -104,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const maxTimeToLoad = 3000;
         const timeToLoad = maxTimeToLoad - Math.random() * 2000;
 
-        F1.state.logoButton.setAttribute("disabled", "");
+        F1.views.logoButton.setAttribute("disabled", "");
         F1.state.hide("main > *");
         F1.notification.clearAll();
         F1.state.show("#mainLoading");
@@ -113,20 +110,12 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
           F1.state.hide("#mainLoading");
           F1.state.show("#home");
-          F1.state.logoButton.removeAttribute("disabled");
+          F1.views.logoButton.removeAttribute("disabled");
         }, timeToLoad);
       },
     },
 
     data: {
-      _racesTemplate: document.querySelector("#racesTemplate"),
-
-      _racesResultsBtnTemplate: document.querySelector(
-        "#racesResultsBtnTemplate",
-      ),
-
-      _racesSection: document.querySelector("#races"),
-
       current: [],
       racesIdx: 0,
       qualifyingIdx: 1,
@@ -238,9 +227,39 @@ document.addEventListener("DOMContentLoaded", () => {
         );
       },
     },
+
+    /* Purpose: Stores references to various viewable objects. */
+    views: {
+      /* Purpose: To store a reference to the logo's button in the header. */
+      logoButton: document.querySelector("#logoButton"),
+
+      /* Purpose: To store the main loading view. */
+      mainLoading: document.querySelector("#mainLoading"),
+
+      /* Purpose: To store the home view. */
+      home: document.querySelector("#home"),
+
+      /* Purpose: To store the browse view. */
+      browse: document.querySelector("#browse"),
+
+      /* Purpose: To store the races section from the browse view. */
+      racesSection: document.querySelector("#races"),
+
+      /* Purpose: To store the races table from the races section. */
+      racesTable: document.querySelector("#racesTable"),
+
+      /* Purpose: To store the raceResults section from the browse view. */
+      raceResults: document.querySelector("#raceResults"),
+
+      /* Purpose: To store the qualifying table from the raceResults section. */
+      qualifyingTable: document.querySelector("#qualifyingTable"),
+
+      /* Purpose: To store the results table from the raceResults section. */
+      resultsTable: document.querySelector("#resultsTable"),
+    },
   };
 
-  F1.state.logoButton.addEventListener("click", F1.state.switchToHome);
+  F1.views.logoButton.addEventListener("click", F1.state.switchToHome);
 
   const selSeason = document.querySelector("#selSeason");
   selSeason.addEventListener("change", () => {
@@ -255,54 +274,51 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  const racesTable = F1.data._racesSection.querySelector("ul");
-  racesTable.addEventListener("click", (e) => {
+  F1.views.racesTable.addEventListener("click", (e) => {
     if (e.target.dataset.sort) {
       populateRaces(racesTable, F1.data.current[F1.data.racesIdx], e.target);
     }
   });
 
-  const qualifyingTable = document.querySelector("#qualifyingTable");
-  const resultsTable = document.querySelector("#resultsTable");
-  racesTable.addEventListener("click", (e) => {
+  F1.views.racesTable.addEventListener("click", (e) => {
     const raceID = e.target.dataset.raceID;
 
     if (e.target.dataset.raceID) {
       resetBrowseView();
-      qualifyingTable.dataset.raceID = raceID;
-      resultsTable.dataset.raceID = raceID;
+      F1.views.qualifyingTable.dataset.raceID = raceID;
+      F1.views.resultsTable.dataset.raceID = raceID;
 
       setRaceInfoBlock(F1.data.current[F1.data.racesIdx], raceID);
 
       populateQualifying(
-        qualifyingTable,
+        F1.views.qualifyingTable,
         F1.data.current[F1.data.qualifyingIdx],
         raceID,
-        qualifyingTable.querySelector('[data-sort = "position"]'),
+        F1.views.qualifyingTable.querySelector('[data-sort = "position"]'),
       );
       populateResults(
-        resultsTable,
+        F1.views.resultsTable,
         F1.data.current[F1.data.resultsIdx],
         raceID,
-        qualifyingTable.querySelector('[data-sort = "position"]'),
+        F1.views.qualifyingTable.querySelector('[data-sort = "position"]'),
       );
 
       F1.state.show("#raceResults");
     }
   });
 
-  qualifyingTable.addEventListener("click", (e) => {
+  F1.views.qualifyingTable.addEventListener("click", (e) => {
     if (e.target.dataset.sort) {
       populateQualifying(
-        qualifyingTable,
+        F1.views.qualifyingTable,
         F1.data.current[F1.data.qualifyingIdx],
-        qualifyingTable.dataset.raceID,
+        F1.views.qualifyingTable.dataset.raceID,
         e.target,
       );
     }
   });
 
-  qualifyingTable.addEventListener("click", (e) => {
+  F1.views.qualifyingTable.addEventListener("click", (e) => {
     if (e.target.dataset.constructorID) {
       const dialog = document.querySelector("#constructor");
       prepConstructorDialog(
@@ -316,7 +332,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  qualifyingTable.addEventListener("click", (e) => {
+  F1.views.qualifyingTable.addEventListener("click", (e) => {
     if (e.target.dataset.driverID) {
       const dialog = document.querySelector("#driver");
       prepDriverDialog(
@@ -330,18 +346,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  resultsTable.addEventListener("click", (e) => {
+  F1.views.resultsTable.addEventListener("click", (e) => {
     if (e.target.dataset.sort) {
       populateResults(
-        resultsTable,
+        F1.views.resultsTable,
         F1.data.current[F1.data.resultsIdx],
-        resultsTable.dataset.raceID,
+        F1.views.resultsTable.dataset.raceID,
         e.target,
       );
     }
   });
 
-  resultsTable.addEventListener("click", (e) => {
+  F1.views.resultsTable.addEventListener("click", (e) => {
     if (e.target.dataset.constructorID) {
       const dialog = document.querySelector("#constructor");
       prepConstructorDialog(
@@ -355,7 +371,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  resultsTable.addEventListener("click", (e) => {
+  F1.views.resultsTable.addEventListener("click", (e) => {
     if (e.target.dataset.driverID) {
       const dialog = document.querySelector("#driver");
       prepDriverDialog(
@@ -468,9 +484,9 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   function resetBrowseView() {
     F1.state.hide("#raceResults");
-    racesTable.dataset.currSort = "";
-    qualifyingTable.dataset.currSort = "";
-    resultsTable.dataset.currSort = "";
+    F1.views.racesTable.dataset.currSort = "";
+    F1.views.qualifyingTable.dataset.currSort = "";
+    F1.views.resultsTable.dataset.currSort = "";
   }
 
   /*
@@ -882,7 +898,7 @@ document.addEventListener("DOMContentLoaded", () => {
    * Details: It is assumed that the retrieved data is unsorted.
    */
   async function handleRaces(year, domain = F1.data.default_domain) {
-    F1.state.logoButton.setAttribute("disabled", "");
+    F1.views.logoButton.setAttribute("disabled", "");
     F1.state.hide("main > *");
     F1.notification.clearAll();
     F1.state.show("#mainLoading");
@@ -914,19 +930,19 @@ document.addEventListener("DOMContentLoaded", () => {
     if (data) {
       F1.data.current = data;
 
-      const h2 = F1.data._racesSection.querySelector("h2");
+      const h2 = F1.views.racesSection.querySelector("h2");
       const h2Text = h2.textContent.replace("[year]", year);
       h2.textContent = h2Text;
 
       populateRaces(
-        racesTable,
+        F1.views.racesTable,
         data[F1.data.racesIdx],
-        racesTable.querySelector('[data-sort = "round"]'),
+        F1.views.racesTable.querySelector('[data-sort = "round"]'),
       );
 
       F1.state.hide("#mainLoading");
       F1.state.show("#browse");
-      F1.state.logoButton.removeAttribute("disabled");
+      F1.views.logoButton.removeAttribute("disabled");
     }
 
     selSeason.value = "";
