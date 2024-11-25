@@ -215,7 +215,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   qualifyingTable.addEventListener("click", (e) => {
     if (e.target.dataset.driverID) {
-      showDriverDialog();
+      const dialog = document.querySelector("#driver");
+      prepDriverDialog(dialog);
+      dialog.showModal();
     }
   });
 
@@ -238,7 +240,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   resultsTable.addEventListener("click", (e) => {
     if (e.target.dataset.driverID) {
-      showDriverDialog();
+      const dialog = document.querySelector("#driver");
+      prepDriverDialog(dialog);
+      dialog.showModal();
     }
   });
 
@@ -258,9 +262,28 @@ document.addEventListener("DOMContentLoaded", () => {
     dialog.showModal();
   }
 
-  function showDriverDialog(driverData) {
-    const dialog = document.querySelector("#driver");
-    dialog.showModal();
+  /*
+   * Purpose: Preps the driver dialog with the provided data.
+   */
+  function prepDriverDialog(dialog, driverData) {
+    console.table(driverData);
+    dialog.querySelector("#driverDiagName").textContent =
+      `${driverData.forename} ${driverData.surname}`;
+    dialog.querySelector("#driverDiagNationality").textContent =
+      driverData.nationality;
+
+    const [year, monthNumStr, dayStr] = driverData.dob;
+    dialog.querySelector("#driverDiagMonth").textContent = getShortMonthName(
+      Number.parseInt(monthNumStr),
+    );
+    dialog.querySelector("#driverDiagDay").textContent =
+      Number.parseInt(dayStr);
+    dialog.querySelector("#driverDiagYear").textContent = year;
+
+    dialog.querySelector("#driverDiagAge").textContent = calcAge(
+      driverData.dob,
+    );
+    dialog.querySelector("#driverDiagURL").textContent = driverData.url;
   }
 
   /*
@@ -370,6 +393,28 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
     return monthVal < monthNumName.length ? monthNumName[monthVal] : undefined;
+  }
+
+  /*
+   * Purpose: To get the month's short name from its numeric value.
+   *
+   * Details: This numeric value starts at 1 for the first month.
+   *
+   * Returns: A string with the month's name or undefined if monthVal
+   * is invalid.
+   */
+  function getShortMonthName(monthVal) {
+    const monthName = getMonthName(monthVal);
+    const shortMonthLen = 3;
+
+    let shortMonthName = undefined;
+
+    if (monthName) {
+      shortMonthName = monthName;
+      shortMonthName.length = shortMonthLen;
+    }
+
+    return shortMonthName;
   }
 
   /*
