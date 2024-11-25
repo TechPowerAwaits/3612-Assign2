@@ -204,13 +204,99 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     },
 
+    /*
+     * Purpose: Contains functionality related to manipulating and storing data.
+     */
     data: {
-      current: [],
-      racesIdx: 0,
-      qualifyingIdx: 1,
-      resultsIdx: 2,
-
+      /*
+       * Purpose: Provides the default domain that contains the desired API.
+       */
       default_domain: "https://www.randyconnolly.com/funwebdev/3rd/api/f1",
+
+      /*
+       * Purpose: Contains functionality related to race data for a given season.
+       */
+      races: {
+        _current: [],
+        _racesIdx: 0,
+        _qualifyingIdx: 1,
+        _resultsIdx: 2,
+
+        /*
+         * Purpose: Populates the races table with acquired data.
+         */
+        handle: async function (year, domain = F1.data.default_domain) {
+          F1.views.logoButton.setAttribute("disabled", "");
+          F1.state.hide(F1.views.home);
+          F1.notification.clearAll();
+          F1.state.show(F1.views.mainLoading);
+
+          const dataID = `allRaceData${year}`;
+
+          let data = localStorage.getItem(dataID);
+
+          if (!data) {
+            try {
+              data = await Promise.all([
+                F1.data.checkedFetch(`${domain}/races.php?season=${year}`),
+                F1.data.checkedFetch(`${domain}/qualifying.php?season=${year}`),
+                F1.data.checkedFetch(`${domain}/results.php?season=${year}`),
+              ]);
+
+              F1.data.throwOnDataError();
+
+              localStorage.setItem(dataID, JSON.stringify(data));
+            } catch (error) {
+              F1.state.switchToHome();
+              F1.notification.insert("Error", error.message);
+              data = null;
+            }
+          } else {
+            data = JSON.parse(data);
+          }
+
+          if (data) {
+            F1.data.races._current = data;
+
+            const h2 = F1.views.racesSection.querySelector("h2");
+            const h2Text = h2.textContent.replace("[year]", year);
+            h2.textContent = h2Text;
+
+            populateRaces(
+              F1.views.racesTable,
+              F1.data.races.get(),
+              F1.views.racesTable.querySelector('[data-sort = "round"]'),
+            );
+
+            F1.state.hide(F1.views.mainLoading);
+            F1.state.show(F1.views.browse);
+            F1.views.logoButton.removeAttribute("disabled");
+          }
+
+          selSeason.value = "";
+        },
+
+        /*
+         * Returns: An array with race data for the current season.
+         */
+        get: function () {
+          return F1.data.races._current[F1.data.races._racesIdx];
+        },
+
+        /*
+         * Returns: An array with qualifying data for the current season.
+         */
+        getQualifying: function () {
+          return F1.data.races._current[F1.data.races._qualifyingIdx];
+        },
+
+        /*
+         * Returns: An array with results data for the current season.
+         */
+        getResults: function () {
+          return F1.data.races._current[F1.data.races._resultsIdx];
+        },
+      },
 
       checkedFetch: async function (url) {
         const response = await fetch(url);
@@ -354,7 +440,7 @@ document.addEventListener("DOMContentLoaded", () => {
   selSeason.addEventListener("change", () => {
     const seasonVal = selSeason.value;
     if (seasonVal) {
-      handleRaces(seasonVal);
+      F1.data.races.handle(seasonVal);
     } else {
       F1.notification.insert(
         "Error",
@@ -365,7 +451,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   F1.views.racesTable.addEventListener("click", (e) => {
     if (e.target.dataset.sort) {
-      populateRaces(racesTable, F1.data.current[F1.data.racesIdx], e.target);
+      populateRaces(racesTable, F1.data.races.get(), e.target);
     }
   });
 
@@ -377,17 +463,17 @@ document.addEventListener("DOMContentLoaded", () => {
       F1.views.qualifyingTable.dataset.raceID = raceID;
       F1.views.resultsTable.dataset.raceID = raceID;
 
-      setRaceInfoBlock(F1.data.current[F1.data.racesIdx], raceID);
+      setRaceInfoBlock(F1.data.races.get(), raceID);
 
       populateQualifying(
         F1.views.qualifyingTable,
-        F1.data.current[F1.data.qualifyingIdx],
+        F1.data.races.getQualifying(),
         raceID,
         F1.views.qualifyingTable.querySelector('[data-sort = "position"]'),
       );
       populateResults(
         F1.views.resultsTable,
-        F1.data.current[F1.data.resultsIdx],
+        F1.data.races.getResults(),
         raceID,
         F1.views.qualifyingTable.querySelector('[data-sort = "position"]'),
       );
@@ -400,7 +486,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target.dataset.sort) {
       populateQualifying(
         F1.views.qualifyingTable,
-        F1.data.current[F1.data.qualifyingIdx],
+        F1.data.races.getQualifying(),
         F1.views.qualifyingTable.dataset.raceID,
         e.target,
       );
@@ -413,9 +499,9 @@ document.addEventListener("DOMContentLoaded", () => {
       prepDriverDialog(
         dialog,
         F1.data.getDriver(e.target.dataset.driverID),
-        F1.data.current[F1.data.resultsIdx].filter(
-          (result) => result.driver.id == e.target.dataset.driverID,
-        ),
+        F1.data.races
+          .getResults()
+          .filter((result) => result.driver.id == e.target.dataset.driverID),
       );
       dialog.showModal();
     }
@@ -425,7 +511,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target.dataset.sort) {
       populateResults(
         F1.views.resultsTable,
-        F1.data.current[F1.data.resultsIdx],
+        F1.data.races.getResults(),
         F1.views.resultsTable.dataset.raceID,
         e.target,
       );
@@ -438,9 +524,11 @@ document.addEventListener("DOMContentLoaded", () => {
       prepConstructorDialog(
         dialog,
         F1.data.getConstructor(e.target.dataset.constructorID),
-        F1.data.current[F1.data.resultsIdx].filter(
-          (result) => result.constructor.id == e.target.dataset.constructorID,
-        ),
+        F1.data.races
+          .getResults()
+          .filter(
+            (result) => result.constructor.id == e.target.dataset.constructorID,
+          ),
       );
       dialog.showModal();
     }
@@ -448,9 +536,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.querySelector("#circuitBtn").addEventListener("click", (e) => {
     if (e.currentTarget.dataset.circuitID) {
-      const circuitData = F1.data.current[F1.data.racesIdx].find(
-        (race) => race.circuit.id == e.currentTarget.dataset.circuitID,
-      ).circuit;
+      const circuitData = F1.data.races
+        .get()
+        .find(
+          (race) => race.circuit.id == e.currentTarget.dataset.circuitID,
+        ).circuit;
       const dialog = document.querySelector("#circuit");
       prepCircuitDialog(dialog, circuitData);
       dialog.showModal();
@@ -860,60 +950,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const textWrapper = document.createElement("span");
     textWrapper.textContent = text;
     return appendNode(list, textWrapper, ...classes);
-  }
-
-  /*
-   * Details: It is assumed that the retrieved data is unsorted.
-   */
-  async function handleRaces(year, domain = F1.data.default_domain) {
-    F1.views.logoButton.setAttribute("disabled", "");
-    F1.state.hide(F1.views.home);
-    F1.notification.clearAll();
-    F1.state.show(F1.views.mainLoading);
-
-    const dataID = `allRaceData${year}`;
-
-    let data = localStorage.getItem(dataID);
-
-    if (!data) {
-      try {
-        data = await Promise.all([
-          F1.data.checkedFetch(`${domain}/races.php?season=${year}`),
-          F1.data.checkedFetch(`${domain}/qualifying.php?season=${year}`),
-          F1.data.checkedFetch(`${domain}/results.php?season=${year}`),
-        ]);
-
-        F1.data.throwOnDataError();
-
-        localStorage.setItem(dataID, JSON.stringify(data));
-      } catch (error) {
-        F1.state.switchToHome();
-        F1.notification.insert("Error", error.message);
-        data = null;
-      }
-    } else {
-      data = JSON.parse(data);
-    }
-
-    if (data) {
-      F1.data.current = data;
-
-      const h2 = F1.views.racesSection.querySelector("h2");
-      const h2Text = h2.textContent.replace("[year]", year);
-      h2.textContent = h2Text;
-
-      populateRaces(
-        F1.views.racesTable,
-        data[F1.data.racesIdx],
-        F1.views.racesTable.querySelector('[data-sort = "round"]'),
-      );
-
-      F1.state.hide(F1.views.mainLoading);
-      F1.state.show(F1.views.browse);
-      F1.views.logoButton.removeAttribute("disabled");
-    }
-
-    selSeason.value = "";
   }
 
   /*
