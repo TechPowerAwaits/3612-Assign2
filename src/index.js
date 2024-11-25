@@ -310,21 +310,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  F1.views.qualifyingTable.addEventListener("click", (e) => {
-    if (e.target.dataset.constructorID) {
-      const dialog = document.querySelector("#constructor");
-      prepConstructorDialog(
-        dialog,
-        F1.data.getConstructor(e.target.dataset.constructorID),
-        F1.data.current[F1.data.resultsIdx].filter(
-          (result) => result.constructor.id == e.target.dataset.constructorID,
-        ),
-      );
-      dialog.showModal();
-    }
-  });
-
-  F1.views.qualifyingTable.addEventListener("click", (e) => {
+  F1.views.raceResults.addEventListener("click", (e) => {
     if (e.target.dataset.driverID) {
       const dialog = document.querySelector("#driver");
       prepDriverDialog(
@@ -349,7 +335,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  F1.views.resultsTable.addEventListener("click", (e) => {
+  F1.views.raceResults.addEventListener("click", (e) => {
     if (e.target.dataset.constructorID) {
       const dialog = document.querySelector("#constructor");
       prepConstructorDialog(
@@ -357,20 +343,6 @@ document.addEventListener("DOMContentLoaded", () => {
         F1.data.getConstructor(e.target.dataset.constructorID),
         F1.data.current[F1.data.resultsIdx].filter(
           (result) => result.constructor.id == e.target.dataset.constructorID,
-        ),
-      );
-      dialog.showModal();
-    }
-  });
-
-  F1.views.resultsTable.addEventListener("click", (e) => {
-    if (e.target.dataset.driverID) {
-      const dialog = document.querySelector("#driver");
-      prepDriverDialog(
-        dialog,
-        F1.data.getDriver(e.target.dataset.driverID),
-        F1.data.current[F1.data.resultsIdx].filter(
-          (result) => result.driver.id == e.target.dataset.driverID,
         ),
       );
       dialog.showModal();
