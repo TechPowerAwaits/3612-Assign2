@@ -261,7 +261,13 @@ document.addEventListener("DOMContentLoaded", () => {
   qualifyingTable.addEventListener("click", (e) => {
     if (e.target.dataset.driverID) {
       const dialog = document.querySelector("#driver");
-      prepDriverDialog(dialog, F1.data.getDriver(e.target.dataset.driverID));
+      prepDriverDialog(
+        dialog,
+        F1.data.getDriver(e.target.dataset.driverID),
+        F1.data.current[F1.data.resultsIdx].filter(
+          (result) => result.driver.id == e.target.dataset.driverID,
+        ),
+      );
       dialog.showModal();
     }
   });
@@ -286,7 +292,13 @@ document.addEventListener("DOMContentLoaded", () => {
   resultsTable.addEventListener("click", (e) => {
     if (e.target.dataset.driverID) {
       const dialog = document.querySelector("#driver");
-      prepDriverDialog(dialog, F1.data.getDriver(e.target.dataset.driverID));
+      prepDriverDialog(
+        dialog,
+        F1.data.getDriver(e.target.dataset.driverID),
+        F1.data.current[F1.data.resultsIdx].filter(
+          (result) => result.driver.id == e.target.dataset.driverID,
+        ),
+      );
       dialog.showModal();
     }
   });
@@ -310,7 +322,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /*
    * Purpose: Preps the driver dialog with the provided data.
    */
-  function prepDriverDialog(dialog, driverData) {
+  function prepDriverDialog(dialog, driverData, driverResultsData) {
     dialog.querySelector("#driverDiagName").textContent =
       `${driverData.forename} ${driverData.surname}`;
     dialog.querySelector("#driverDiagNationality").textContent =
@@ -328,6 +340,21 @@ document.addEventListener("DOMContentLoaded", () => {
       driverData.dob,
     );
     dialog.querySelector("#driverDiagURL").setAttribute("href", driverData.url);
+
+    populateDiagResults(
+      dialog.querySelector("#driverDiagTable"),
+      driverResultsData,
+    );
+
+    function populateDiagResults(list, data) {
+      clearNonHeaderRows(list);
+      data.forEach((result) => {
+        appendText(list, result.race.round);
+        appendText(list, result.race.name);
+        appendText(list, result.position);
+        appendText(list, result.points);
+      });
+    }
   }
 
   /*
