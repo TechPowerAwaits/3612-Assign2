@@ -304,7 +304,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   qualifyingTable.addEventListener("click", (e) => {
     if (e.target.dataset.constructorID) {
-      showConstructorDialog();
+      const dialog = document.querySelector("#constructor");
+      prepConstructorDialog(
+        dialog,
+        F1.data.getConstructor(e.target.dataset.constructorID),
+      );
+      dialog.showModal();
     }
   });
 
@@ -335,7 +340,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   resultsTable.addEventListener("click", (e) => {
     if (e.target.dataset.constructorID) {
-      showConstructorDialog();
+      const dialog = document.querySelector("#constructor");
+      prepConstructorDialog(
+        dialog,
+        F1.data.getConstructor(e.target.dataset.constructorID),
+      );
+      dialog.showModal();
     }
   });
 
@@ -364,9 +374,36 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  function showConstructorDialog(constructorData, resultsData) {
-    const dialog = document.querySelector("#constructor");
-    dialog.showModal();
+  /*
+   * Purpose: Preps the constructor dialog with the provided data.
+   */
+  function prepConstructorDialog(dialog, constructorData, resultsData) {
+    dialog.querySelector("#constructorDiagName").textContent =
+      constructorData.name;
+    dialog.querySelector("#constructorDiagNationality").textContent =
+      constructorData.nationality;
+    dialog
+      .querySelector("#constructorDiagURL")
+      .setAttribute("href", constructorData.url);
+
+    /*populateDiagResults(
+      dialog.querySelector("#constructorDiagTable"),
+      resultsData,
+    );*/
+
+    function populateDiagResults(list, data) {
+      clearNonHeaderRows(list);
+      data.forEach((result) => {
+        appendText(list, result.race.round);
+        appendText(list, result.race.name);
+        appendText(
+          list,
+          `${resultsData.driver.forename} ${resultsData.driver.surname}`,
+        );
+        appendText(list, result.position);
+        appendText(list, result.points);
+      });
+    }
   }
 
   /*
