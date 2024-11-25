@@ -386,6 +386,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const diffYear = currDate.getFullYear() - yearStr;
     let age = diffYear;
 
+    // Date's getMonth() method starts at zero.
     const currMonth = currDate.getMonth() + 1;
 
     if (
