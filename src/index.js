@@ -308,6 +308,9 @@ document.addEventListener("DOMContentLoaded", () => {
       prepConstructorDialog(
         dialog,
         F1.data.getConstructor(e.target.dataset.constructorID),
+        F1.data.current[F1.data.resultsIdx].filter(
+          (result) => result.constructor.id == e.target.dataset.constructorID,
+        ),
       );
       dialog.showModal();
     }
@@ -344,6 +347,9 @@ document.addEventListener("DOMContentLoaded", () => {
       prepConstructorDialog(
         dialog,
         F1.data.getConstructor(e.target.dataset.constructorID),
+        F1.data.current[F1.data.resultsIdx].filter(
+          (result) => result.constructor.id == e.target.dataset.constructorID,
+        ),
       );
       dialog.showModal();
     }
@@ -386,20 +392,17 @@ document.addEventListener("DOMContentLoaded", () => {
       .querySelector("#constructorDiagURL")
       .setAttribute("href", constructorData.url);
 
-    /*populateDiagResults(
+    populateDiagResults(
       dialog.querySelector("#constructorDiagTable"),
       resultsData,
-    );*/
+    );
 
     function populateDiagResults(list, data) {
       clearNonHeaderRows(list);
       data.forEach((result) => {
         appendText(list, result.race.round);
         appendText(list, result.race.name);
-        appendText(
-          list,
-          `${resultsData.driver.forename} ${resultsData.driver.surname}`,
-        );
+        appendText(list, `${result.driver.forename} ${result.driver.surname}`);
         appendText(list, result.position);
         appendText(list, result.points);
       });
