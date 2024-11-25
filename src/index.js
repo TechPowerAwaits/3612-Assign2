@@ -152,14 +152,19 @@ document.addEventListener("DOMContentLoaded", () => {
       },
 
       driverData: [],
+      driverID: "drivers",
       prepDriverData: async function (domain = F1.data.default_domain) {
-        const dataID = "drivers";
-        let data = localStorage.getItem(dataID);
+        let data = localStorage.getItem(F1.data.driverID);
 
         if (!data) {
-          data = await F1.data.checkedFetch(`${domain}/drivers.php`);
-          F1.data.throwOnDataError(data);
-          localStorage.setItem(dataID, JSON.stringify(data));
+          try {
+            data = await F1.data.checkedFetch(`${domain}/drivers.php`);
+            F1.data.throwOnDataError(data);
+            localStorage.setItem(F1.data.driverID, JSON.stringify(data));
+          } catch (error) {
+            F1.notification.insert("Error", error.message);
+            data = null;
+          }
         } else {
           data = JSON.parse(data);
         }
@@ -182,10 +187,55 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (targetDriver) {
           targetDriver.fav = !targetDriver.fav;
+          localStorage.setItem(F1.data.driverID, JSON.stringify(data));
         }
       },
       getDriver: function (driverID) {
         return F1.data.driverData.find((driver) => driver.driverId == driverID);
+      },
+
+      constructorData: [],
+      constructorID: "constructors",
+      prepConstructorData: async function (domain = F1.data.default_domain) {
+        let data = localStorage.getItem(F1.data.constructorID);
+
+        if (!data) {
+          try {
+            data = await F1.data.checkedFetch(`${domain}/constructors.php`);
+            F1.data.throwOnDataError(data);
+            localStorage.setItem(F1.data.constructorID, JSON.stringify(data));
+          } catch (error) {
+            F1.notification.insert("Error", error.message);
+          }
+        } else {
+          data = JSON.parse(data);
+        }
+
+        if (data) {
+          F1.data.constructorData = data;
+        }
+      },
+      isConstructorFav: function (constructorID) {
+        const targetConstructor = F1.data.constructorData.find(
+          (constructor) => constructor.constructorId == constructorID,
+        );
+
+        return targetConstructor && targetConstructor.fav;
+      },
+      toggleConstructorFav: function (constructorID) {
+        const targetConstructor = F1.data.constructorData.find(
+          (constructor) => constructor.constructorId == constructorID,
+        );
+
+        if (targetConstructor) {
+          targetConstructor.fav = !targetConstructor.fav;
+          localStorage.setItem(F1.data.constructorID, JSON.stringify(data));
+        }
+      },
+      getConstructor: function (constructorID) {
+        return F1.data.constructorData.find(
+          (constructor) => constructor.constructorId == constructorID,
+        );
       },
     },
   };
@@ -883,5 +933,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   F1.data.prepDriverData();
+  F1.data.prepConstructorData();
   F1.state.switchToHome();
 });
