@@ -56,6 +56,103 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     },
 
+    /* Purpose: To store all date-related functionality. */
+    date: {
+      /*
+       * Purpose: To generate a URL to a webpage that contains information on the
+       * date provided.
+       *
+       * Details: The date provided must be a string and in the form: YYYY-MM-DD.
+       *
+       * Returns: A string containing a valid URL.
+       */
+      genLink: function (date) {
+        const baseUrl = "https://www.onthisday.com/date";
+        const [year, monthNumStr, day] = date.split("-");
+        const monthNum = Number.parseInt(monthNumStr);
+
+        return `${baseUrl}/${year}/${F1.date.getMonthName(monthNum)}/${day}`;
+      },
+
+      /*
+       * Purpose: Get a month's full name from its numeric value.
+       *
+       * Details: This numeric value starts at 1 for the first month.
+       *
+       * Returns: A string with the month's name or undefined if monthVal
+       * is invalid.
+       */
+      getMonthName: function (monthVal) {
+        const monthNumName = [
+          undefined,
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ];
+
+        return monthVal < monthNumName.length
+          ? monthNumName[monthVal]
+          : undefined;
+      },
+
+      /*
+       * Purpose: To get the month's short name from its numeric value.
+       *
+       * Details: This numeric value starts at 1 for the first month.
+       *
+       * Returns: A string with the month's name or undefined if monthVal
+       * is invalid.
+       */
+      getShortMonthName: function (monthVal) {
+        const monthName = F1.date.getMonthName(monthVal);
+        const shortMonthLen = 3;
+
+        let shortMonthName = undefined;
+
+        if (monthName) {
+          shortMonthName = monthName.slice(0, shortMonthLen);
+        }
+
+        return shortMonthName;
+      },
+
+      /*
+       * Purpose: To calculate someone's age based on when they were born.
+       *
+       * Details: The date of birth needs to be in the following format: "yyyy-mm-dd".
+       */
+      calcAge: function (dob) {
+        const [yearStr, monthNumStr, dayStr] = dob.split("-");
+        const monthNum = Number.parseInt(monthNumStr);
+        const day = Number.parseInt(dayStr);
+
+        const currDate = new Date();
+        const diffYear = currDate.getFullYear() - yearStr;
+        let age = diffYear;
+
+        // Date's getMonth() method starts at zero.
+        const currMonth = currDate.getMonth() + 1;
+
+        if (
+          currMonth < monthNum ||
+          (currMonth == monthNum && currDate.getDate() < day)
+        ) {
+          age -= 1;
+        }
+
+        return age;
+      },
+    },
+
     /*
      * Purpose: Handles anything affecting the state of
      * elements.
@@ -399,14 +496,13 @@ document.addEventListener("DOMContentLoaded", () => {
       driverData.nationality;
 
     const [year, monthNumStr, dayStr] = driverData.dob.split("-");
-    dialog.querySelector("#driverDiagMonth").textContent = getShortMonthName(
-      Number.parseInt(monthNumStr),
-    );
+    dialog.querySelector("#driverDiagMonth").textContent =
+      F1.date.getShortMonthName(Number.parseInt(monthNumStr));
     dialog.querySelector("#driverDiagDay").textContent =
       Number.parseInt(dayStr);
     dialog.querySelector("#driverDiagYear").textContent = year;
 
-    dialog.querySelector("#driverDiagAge").textContent = calcAge(
+    dialog.querySelector("#driverDiagAge").textContent = F1.date.calcAge(
       driverData.dob,
     );
     dialog.querySelector("#driverDiagURL").setAttribute("href", driverData.url);
@@ -488,100 +584,8 @@ document.addEventListener("DOMContentLoaded", () => {
       .setAttribute("href", info.circuit.url);
     document
       .querySelector("#dateLink")
-      .setAttribute("href", genDateLink(info.date));
+      .setAttribute("href", F1.date.genLink(info.date));
     document.querySelector("#raceDate").textContent = info.date;
-
-    /*
-     * Purpose: To generate a URL to a webpage that contains information on the
-     * date provided.
-     *
-     * Details: The date provided must be a string and in the form: YYYY-MM-DD.
-     *
-     * Returns: A string containing a valid URL.
-     */
-    function genDateLink(date) {
-      const baseUrl = "https://www.onthisday.com/date";
-      const [year, monthNumStr, day] = date.split("-");
-      const monthNum = Number.parseInt(monthNumStr);
-
-      return `${baseUrl}/${year}/${getMonthName(monthNum)}/${day}`;
-    }
-  }
-
-  /*
-   * Purpose: Get a month's full name from its numeric value.
-   *
-   * Details: This numeric value starts at 1 for the first month.
-   *
-   * Returns: A string with the month's name or undefined if monthVal
-   * is invalid.
-   */
-  function getMonthName(monthVal) {
-    const monthNumName = [
-      undefined,
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-
-    return monthVal < monthNumName.length ? monthNumName[monthVal] : undefined;
-  }
-
-  /*
-   * Purpose: To get the month's short name from its numeric value.
-   *
-   * Details: This numeric value starts at 1 for the first month.
-   *
-   * Returns: A string with the month's name or undefined if monthVal
-   * is invalid.
-   */
-  function getShortMonthName(monthVal) {
-    const monthName = getMonthName(monthVal);
-    const shortMonthLen = 3;
-
-    let shortMonthName = undefined;
-
-    if (monthName) {
-      shortMonthName = monthName.slice(0, shortMonthLen);
-    }
-
-    return shortMonthName;
-  }
-
-  /*
-   * Purpose: To calculate someone's age based on when they were born.
-   *
-   * Details: The date of birth needs to be in the following format: "yyyy-mm-dd".
-   */
-  function calcAge(dob) {
-    const [yearStr, monthNumStr, dayStr] = dob.split("-");
-    const monthNum = Number.parseInt(monthNumStr);
-    const day = Number.parseInt(dayStr);
-
-    const currDate = new Date();
-    const diffYear = currDate.getFullYear() - yearStr;
-    let age = diffYear;
-
-    // Date's getMonth() method starts at zero.
-    const currMonth = currDate.getMonth() + 1;
-
-    if (
-      currMonth < monthNum ||
-      (currMonth == monthNum && currDate.getDate() < day)
-    ) {
-      age -= 1;
-    }
-
-    return age;
   }
 
   /*
