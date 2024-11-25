@@ -243,7 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 F1.data.checkedFetch(`${domain}/results.php?season=${year}`),
               ]);
 
-              F1.data.throwOnDataError();
+              F1.data.throwOnDataError(data);
 
               localStorage.setItem(dataID, JSON.stringify(data));
             } catch (error) {
@@ -315,91 +315,165 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       },
 
-      driverData: [],
-      driverID: "drivers",
-      prepDriverData: async function (domain = F1.data.default_domain) {
-        let data = localStorage.getItem(F1.data.driverID);
+      /*
+       * Purpose: Acquires data across seasons.
+       *
+       * Details: This data includes information on drivers and constructors.
+       *
+       * All the data is acquired asynchronously.
+       */
+      prepData: function (domain = F1.data.default_domain) {
+        F1.data.driver.prepData(domain);
+        F1.data.constructor.prepData(domain);
+      },
 
-        if (!data) {
-          try {
-            data = await F1.data.checkedFetch(`${domain}/drivers.php`);
-            F1.data.throwOnDataError(data);
-            localStorage.setItem(F1.data.driverID, JSON.stringify(data));
-          } catch (error) {
-            F1.notification.insert("Error", error.message);
-            data = null;
+      /*
+       * Purpose: To manage driver data across all seasons.
+       */
+      driver: {
+        _data: [],
+        _id: "drivers",
+
+        /*
+         * Purpose: Acquires data on all drivers across all seasons.
+         */
+        prepData: async function (domain = F1.data.default_domain) {
+          let data = localStorage.getItem(F1.data.driver._id);
+
+          if (!data) {
+            try {
+              data = await F1.data.checkedFetch(`${domain}/drivers.php`);
+              F1.data.throwOnDataError(data);
+              localStorage.setItem(F1.data.driver._id, JSON.stringify(data));
+            } catch (error) {
+              F1.notification.insert("Error", error.message);
+              data = null;
+            }
+          } else {
+            data = JSON.parse(data);
           }
-        } else {
-          data = JSON.parse(data);
-        }
 
-        if (data) {
-          F1.data.driverData = data;
-        }
-      },
-      isDriverFav: function (driverID) {
-        const targetDriver = F1.data.driverData.find(
-          (driver) => driver.driverId == driverID,
-        );
-
-        return targetDriver && targetDriver.fav;
-      },
-      toggleDriverFav: function (driverID) {
-        const targetDriver = F1.data.driverData.find(
-          (driver) => driver.driverId == driverID,
-        );
-
-        if (targetDriver) {
-          targetDriver.fav = !targetDriver.fav;
-          localStorage.setItem(F1.data.driverID, JSON.stringify(data));
-        }
-      },
-      getDriver: function (driverID) {
-        return F1.data.driverData.find((driver) => driver.driverId == driverID);
-      },
-
-      constructorData: [],
-      constructorID: "constructors",
-      prepConstructorData: async function (domain = F1.data.default_domain) {
-        let data = localStorage.getItem(F1.data.constructorID);
-
-        if (!data) {
-          try {
-            data = await F1.data.checkedFetch(`${domain}/constructors.php`);
-            F1.data.throwOnDataError(data);
-            localStorage.setItem(F1.data.constructorID, JSON.stringify(data));
-          } catch (error) {
-            F1.notification.insert("Error", error.message);
+          if (data) {
+            F1.data.driver._data = data;
           }
-        } else {
-          data = JSON.parse(data);
-        }
+        },
 
-        if (data) {
-          F1.data.constructorData = data;
-        }
-      },
-      isConstructorFav: function (constructorID) {
-        const targetConstructor = F1.data.constructorData.find(
-          (constructor) => constructor.constructorId == constructorID,
-        );
+        /*
+         * Returns: If the given driver is a user favorite.
+         */
+        isFav: function (driverID) {
+          const targetDriver = F1.data.driver._data.find(
+            (driver) => driver.driverId == driverID,
+          );
 
-        return targetConstructor && targetConstructor.fav;
-      },
-      toggleConstructorFav: function (constructorID) {
-        const targetConstructor = F1.data.constructorData.find(
-          (constructor) => constructor.constructorId == constructorID,
-        );
+          return targetDriver && targetDriver.fav;
+        },
 
-        if (targetConstructor) {
-          targetConstructor.fav = !targetConstructor.fav;
-          localStorage.setItem(F1.data.constructorID, JSON.stringify(data));
-        }
+        /*
+         * Purpose: To toggle whether the given driver is a user favorite or not.
+         */
+        toggleFav: function (driverID) {
+          const targetDriver = F1.data.driver._data.find(
+            (driver) => driver.driverId == driverID,
+          );
+
+          if (targetDriver) {
+            targetDriver.fav = !targetDriver.fav;
+            localStorage.setItem(F1.data.driver._id, JSON.stringify(data));
+          }
+        },
+
+        /*
+         * Return: A driver corresponding to the given driverID or undefined if
+         * the driver is not found.
+         */
+        get: function (driverID) {
+          return F1.data.driver._data.find(
+            (driver) => driver.driverId == driverID,
+          );
+        },
+
+        /*
+         * Returns: An array of Driver objects that have been favorited.
+         */
+        getFavs: function () {
+          return F1.data.driver._data.filter((driver) => driver.fav);
+        },
       },
-      getConstructor: function (constructorID) {
-        return F1.data.constructorData.find(
-          (constructor) => constructor.constructorId == constructorID,
-        );
+
+      constructor: {
+        _data: [],
+        _id: "constructors",
+
+        /*
+         * Purpose: Acquires data on all constructors across all seasons.
+         */
+        prepData: async function (domain = F1.data.default_domain) {
+          let data = localStorage.getItem(F1.data.constructor._id);
+
+          if (!data) {
+            try {
+              data = await F1.data.checkedFetch(`${domain}/constructors.php`);
+              F1.data.throwOnDataError(data);
+              localStorage.setItem(
+                F1.data.constructor._id,
+                JSON.stringify(data),
+              );
+            } catch (error) {
+              F1.notification.insert("Error", error.message);
+            }
+          } else {
+            data = JSON.parse(data);
+          }
+
+          if (data) {
+            F1.data.constructor._data = data;
+          }
+        },
+
+        /*
+         * Returns: If the given constructor is a user favorite.
+         */
+        isFav: function (constructorID) {
+          const targetConstructor = F1.data.constructor._data.find(
+            (constructor) => constructor.constructorId == constructorID,
+          );
+
+          return targetConstructor && targetConstructor.fav;
+        },
+
+        /*
+         * Purpose: To toggle whether the given constructor is a user favorite or not.
+         */
+        toggleFav: function (constructorID) {
+          const targetConstructor = F1.data.constructor._data.find(
+            (constructor) => constructor.constructorId == constructorID,
+          );
+
+          if (targetConstructor) {
+            targetConstructor.fav = !targetConstructor.fav;
+            localStorage.setItem(F1.data.constructor._id, JSON.stringify(data));
+          }
+        },
+
+        /*
+         * Return: A constructor corresponding to the given driverID or undefined
+         * if the constructor is not found.
+         */
+        get: function (constructorID) {
+          return F1.data.constructor._data.find(
+            (constructor) => constructor.constructorId == constructorID,
+          );
+        },
+
+        /*
+         * Returns: An array of Constructor objects that have been favorited.
+         */
+        getFavs: function () {
+          return F1.data.constructor._data.filter(
+            (constructor) => constructor.fav,
+          );
+        },
       },
     },
 
@@ -498,7 +572,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const dialog = document.querySelector("#driver");
       prepDriverDialog(
         dialog,
-        F1.data.getDriver(e.target.dataset.driverID),
+        F1.data.driver.get(e.target.dataset.driverID),
         F1.data.races
           .getResults()
           .filter((result) => result.driver.id == e.target.dataset.driverID),
@@ -523,7 +597,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const dialog = document.querySelector("#constructor");
       prepConstructorDialog(
         dialog,
-        F1.data.getConstructor(e.target.dataset.constructorID),
+        F1.data.constructor.get(e.target.dataset.constructorID),
         F1.data.races
           .getResults()
           .filter(
@@ -992,7 +1066,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return btn;
   }
 
-  F1.data.prepDriverData();
-  F1.data.prepConstructorData();
+  F1.data.prepData();
   F1.state.switchToHome();
 });
