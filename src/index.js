@@ -454,8 +454,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let shortMonthName = undefined;
 
     if (monthName) {
-      shortMonthName = monthName;
-      shortMonthName.length = shortMonthLen;
+      shortMonthName = monthName.slice(0, shortMonthLen);
     }
 
     return shortMonthName;
