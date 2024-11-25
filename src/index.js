@@ -258,9 +258,8 @@ document.addEventListener("DOMContentLoaded", () => {
           if (data) {
             F1.data.races._current = data;
 
-            const h2 = F1.views.racesSection.querySelector("h2");
-            const h2Text = h2.textContent.replace("[year]", year);
-            h2.textContent = h2Text;
+            F1.views.racesSection.querySelector("#raceListYear").textContent =
+              year;
 
             populateRaces(
               F1.views.racesTable,
