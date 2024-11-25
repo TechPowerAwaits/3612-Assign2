@@ -62,27 +62,23 @@ document.addEventListener("DOMContentLoaded", () => {
      */
     state: {
       /*
-       * Purpose: Hides the elements selected by the given query.
+       * Purpose: Hides the provided element reference.
        *
        * Details: Only elements that have CSS defined to hide themselves when
        * data-visible is 0 will work with this function.
        */
-      hide: function (query) {
-        document
-          .querySelectorAll(query)
-          .forEach((elm) => (elm.dataset.visible = "0"));
+      hide: function (elm) {
+        elm.dataset.visible = "0";
       },
 
       /*
-       * Purpose: Makes the elements selected by the given query visible.
+       * Purpose: Makes the element provided visible.
        *
        * Details: Only elements that have CSS defined to display themselves when
        * data-visible is 1 will work with this function.
        */
-      show: function (query) {
-        document
-          .querySelectorAll(query)
-          .forEach((elm) => (elm.dataset.visible = "1"));
+      show: function (elm) {
+        elm.dataset.visible = "1";
       },
 
       /*
@@ -92,24 +88,20 @@ document.addEventListener("DOMContentLoaded", () => {
        * seconds to finish loading. It doesn't have anything to load; it simply
        * displays the loading screen to make the process of switching views seem
        * more impressive.
-       *
-       * Known Issues: It does not cache some element references; however, it is
-       * assumed that this won't be a big performance issue as it isn't often that
-       * the user can switch to Home.
        */
       switchToHome: function () {
         const maxTimeToLoad = 3000;
         const timeToLoad = maxTimeToLoad - Math.random() * 2000;
 
         F1.views.logoButton.setAttribute("disabled", "");
-        F1.state.hide("main > *");
+        F1.state.hide(F1.views.browse);
         F1.notification.clearAll();
-        F1.state.show("#mainLoading");
+        F1.state.show(F1.views.mainLoading);
         resetBrowseView();
 
         setTimeout(() => {
-          F1.state.hide("#mainLoading");
-          F1.state.show("#home");
+          F1.state.hide(F1.views.mainLoading);
+          F1.state.show(F1.views.home);
           F1.views.logoButton.removeAttribute("disabled");
         }, timeToLoad);
       },
@@ -303,7 +295,7 @@ document.addEventListener("DOMContentLoaded", () => {
         F1.views.qualifyingTable.querySelector('[data-sort = "position"]'),
       );
 
-      F1.state.show("#raceResults");
+      F1.state.show(F1.views.raceResults);
     }
   });
 
@@ -483,7 +475,7 @@ document.addEventListener("DOMContentLoaded", () => {
    * Purpose: Resets the browse view.
    */
   function resetBrowseView() {
-    F1.state.hide("#raceResults");
+    F1.state.hide(F1.views.raceResults);
     F1.views.racesTable.dataset.currSort = "";
     F1.views.qualifyingTable.dataset.currSort = "";
     F1.views.resultsTable.dataset.currSort = "";
@@ -651,11 +643,11 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateSortArrow(list, sortColElm, descend) {
     list
       .querySelectorAll(".upArrow, .downArrow")
-      .forEach((arrow) => (arrow.dataset.visible = "0"));
+      .forEach((arrow) => F1.state.hide(arrow));
 
-    sortColElm.querySelector(
-      descend ? ".upArrow" : ".downArrow",
-    ).dataset.visible = "1";
+    F1.state.hide(
+      sortColElm.querySelector(descend ? ".upArrow" : ".downArrow"),
+    );
   }
 
   /*
@@ -899,9 +891,9 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   async function handleRaces(year, domain = F1.data.default_domain) {
     F1.views.logoButton.setAttribute("disabled", "");
-    F1.state.hide("main > *");
+    F1.state.hide(F1.views.home);
     F1.notification.clearAll();
-    F1.state.show("#mainLoading");
+    F1.state.show(F1.views.mainLoading);
 
     const dataID = `allRaceData${year}`;
 
@@ -940,8 +932,8 @@ document.addEventListener("DOMContentLoaded", () => {
         F1.views.racesTable.querySelector('[data-sort = "round"]'),
       );
 
-      F1.state.hide("#mainLoading");
-      F1.state.show("#browse");
+      F1.state.hide(F1.views.mainLoading);
+      F1.state.show(F1.views.browse);
       F1.views.logoButton.removeAttribute("disabled");
     }
 
