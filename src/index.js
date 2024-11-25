@@ -336,27 +336,66 @@ document.addEventListener("DOMContentLoaded", () => {
      * Returns: A string containing a valid URL.
      */
     function genDateLink(date) {
-      const monthNumName = [
-        undefined,
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ];
       const baseUrl = "https://www.onthisday.com/date";
       const [year, monthNumStr, day] = date.split("-");
       const monthNum = Number.parseInt(monthNumStr);
 
-      return `${baseUrl}/${year}/${monthNumName[monthNum]}/${day}`;
+      return `${baseUrl}/${year}/${getMonthName(monthNum)}/${day}`;
     }
+  }
+
+  /*
+   * Purpose: Get a month's full name from its numeric value.
+   *
+   * Details: This numeric value starts at 1 for the first month.
+   *
+   * Returns: A string with the month's name or undefined if monthVal
+   * is invalid.
+   */
+  function getMonthName(monthVal) {
+    const monthNumName = [
+      undefined,
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    return monthVal < monthNumName.length ? monthNumName[monthVal] : undefined;
+  }
+
+  /*
+   * Purpose: To calculate someone's age based on when they were born.
+   *
+   * Details: The date of birth needs to be in the following format: "yyyy-mm-dd".
+   */
+  function calcAge(dob) {
+    const [yearStr, monthNumStr, dayStr] = dob.split("-");
+    const monthNum = Number.parseInt(monthNumStr);
+    const day = Number.parseInt(dayStr);
+
+    const currDate = new Date();
+    const diffYear = currDate.getFullYear() - yearStr;
+    let age = diffYear;
+
+    const currMonth = currDate.getMonth() + 1;
+
+    if (
+      currMonth < monthNum ||
+      (currMonth == monthNum && currDate.getDate() < day)
+    ) {
+      age -= 1;
+    }
+
+    return age;
   }
 
   /*
