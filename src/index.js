@@ -142,6 +142,51 @@ document.addEventListener("DOMContentLoaded", () => {
           throw new Error(`Request rejected. Status Code ${response.status}.`);
         }
       },
+
+      throwOnDataError: function (data) {
+        data.forEach((item) => {
+          if (item.error) {
+            throw new Error(item.error.message);
+          }
+        });
+      },
+
+      driverData: [],
+      prepDriverData: async function (domain = F1.data.default_domain) {
+        const dataID = "drivers";
+        let data = localStorage.getItem(dataID);
+
+        if (!data) {
+          data = await F1.data.checkedFetch(`${domain}/drivers.php`);
+          F1.data.throwOnDataError(data);
+          localStorage.setItem(dataID, JSON.stringify(data));
+        } else {
+          data = JSON.parse(data);
+        }
+
+        if (data) {
+          F1.data.driverData = data;
+        }
+      },
+      isDriverFav: function (driverID) {
+        const targetDriver = F1.data.driverData.find(
+          (driver) => driver.driverId == driverID,
+        );
+
+        return targetDriver && targetDriver.fav;
+      },
+      toggleDriverFav: function (driverID) {
+        const targetDriver = F1.data.driverData.find(
+          (driver) => driver.driverId == driverID,
+        );
+
+        if (targetDriver) {
+          targetDriver.fav = !targetDriver.fav;
+        }
+      },
+      getDriver: function (driverID) {
+        return F1.data.driverData.find((driver) => driver.driverId == driverID);
+      },
     },
   };
 
@@ -216,7 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
   qualifyingTable.addEventListener("click", (e) => {
     if (e.target.dataset.driverID) {
       const dialog = document.querySelector("#driver");
-      prepDriverDialog(dialog);
+      prepDriverDialog(dialog, F1.data.getDriver(e.target.dataset.driverID));
       dialog.showModal();
     }
   });
@@ -241,7 +286,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resultsTable.addEventListener("click", (e) => {
     if (e.target.dataset.driverID) {
       const dialog = document.querySelector("#driver");
-      prepDriverDialog(dialog);
+      prepDriverDialog(dialog, F1.data.getDriver(e.target.dataset.driverID));
       dialog.showModal();
     }
   });
@@ -266,13 +311,12 @@ document.addEventListener("DOMContentLoaded", () => {
    * Purpose: Preps the driver dialog with the provided data.
    */
   function prepDriverDialog(dialog, driverData) {
-    console.table(driverData);
     dialog.querySelector("#driverDiagName").textContent =
       `${driverData.forename} ${driverData.surname}`;
     dialog.querySelector("#driverDiagNationality").textContent =
       driverData.nationality;
 
-    const [year, monthNumStr, dayStr] = driverData.dob;
+    const [year, monthNumStr, dayStr] = driverData.dob.split("-");
     dialog.querySelector("#driverDiagMonth").textContent = getShortMonthName(
       Number.parseInt(monthNumStr),
     );
@@ -283,7 +327,7 @@ document.addEventListener("DOMContentLoaded", () => {
     dialog.querySelector("#driverDiagAge").textContent = calcAge(
       driverData.dob,
     );
-    dialog.querySelector("#driverDiagURL").textContent = driverData.url;
+    dialog.querySelector("#driverDiagURL").setAttribute("href", driverData.url);
   }
 
   /*
@@ -739,11 +783,7 @@ document.addEventListener("DOMContentLoaded", () => {
           F1.data.checkedFetch(`${domain}/results.php?season=${year}`),
         ]);
 
-        data.forEach((dataset) => {
-          if (dataset.error) {
-            throw new Error(dataset.error.message);
-          }
-        });
+        F1.data.throwOnDataError();
 
         localStorage.setItem(dataID, JSON.stringify(data));
       } catch (error) {
@@ -798,23 +838,24 @@ document.addEventListener("DOMContentLoaded", () => {
     return btn;
   }
 
+  /*
+   * Purpose: Creates and returns a styled text-based button with the given
+   * button.
+   *
+   * Details: The created element is not added to the DOM.
+   *
+   * Returns: A (hyperlink-looking) button.
+   */
+  function createTextButton(text) {
+    const btn = document.createElement("button");
+
+    btn.textContent = text;
+    btn.setAttribute("type", "button");
+    btn.classList.add("underline", "decoration-dotted", "hover:text-blue-300");
+
+    return btn;
+  }
+
+  F1.data.prepDriverData();
   F1.state.switchToHome();
 });
-
-/*
- * Purpose: Creates and returns a styled text-based button with the given
- * button.
- *
- * Details: The created element is not added to the DOM.
- *
- * Returns: A (hyperlink-looking) button.
- */
-function createTextButton(text) {
-  const btn = document.createElement("button");
-
-  btn.textContent = text;
-  btn.setAttribute("type", "button");
-  btn.classList.add("underline", "decoration-dotted", "hover:text-blue-300");
-
-  return btn;
-}
