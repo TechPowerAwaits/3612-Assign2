@@ -668,11 +668,10 @@
           <div></div>
           <a
             id="circuitDiagURL"
-            class="col-span-2 text-center text-sm underline decoration-dotted hover:text-blue-300 hover:visited:text-red-300"
+            class="text-center text-sm underline decoration-dotted hover:text-blue-300 hover:visited:text-red-300"
           >
             [link]
           </a>
-          <div></div>
         </form>
       </dialog>
       <dialog class="bg-slate-700 text-white" id="driver">
@@ -730,7 +729,7 @@
           <div></div>
           <a
             id="driverDiagURL"
-            class="col-span-2 text-center text-sm underline decoration-dotted hover:text-blue-300 hover:visited:text-red-300"
+            class="text-center text-sm underline decoration-dotted hover:text-blue-300 hover:visited:text-red-300"
           >
             [link]
           </a>
@@ -746,16 +745,53 @@
         </form>
       </dialog>
       <dialog class="bg-slate-700 text-white" id="constructor">
-        <form method="dialog">
-          <header class="flex">
-            <h2>Constructor</h2>
-            <button
-              class="bg-red-300 px-1 hover:bg-blue-300 hover:text-zinc-300"
-              type="submit"
-            >
-              X
-            </button>
-          </header>
+        <form class="grid-cols-max-2 mb-1 ml-1 grid gap-x-1.5" method="dialog">
+          <h2 class="text-center text-lg font-medium">Constructor</h2>
+          <menu class="flex gap-x-0.5">
+            <li>
+              <button
+                class="group bg-blue-300 px-1 hover:bg-green-300 data-[favorite]:hover:bg-red-300"
+                type="button"
+              >
+                <span class="hidden group-data-[favorite]:inline"
+                  >&#x2605;</span
+                >
+                <span class="group-data-[favorite]:hidden">&#x2729;</span>
+              </button>
+            </li>
+            <li>
+              <button
+                class="bg-blue-300 px-1 hover:bg-red-300 hover:font-bold"
+                type="submit"
+              >
+                X
+              </button>
+            </li>
+          </menu>
+          <p class="text-center">
+            <span id="constructorDiagName"></span> (<span
+              id="constructorDiagNationality"
+            ></span
+            >)
+          </p>
+          <div></div>
+          <a
+            id="constructorDiagURL"
+            class="text-center text-sm underline decoration-dotted hover:text-blue-300 hover:visited:text-red-300"
+          >
+            [link]
+          </a>
+          <div></div>
+          <ul
+            class="grid-cols-max-5 grid max-h-36 justify-center gap-1 overflow-y-scroll text-center"
+            id="constructorDiagTable"
+          >
+            <li class="colHeader font-bold">Rnd</li>
+            <li class="colHeader font-bold">Race</li>
+            <li class="colHeader font-bold">Driver</li>
+            <li class="colHeader font-bold">Pos</li>
+            <li class="colHeader font-bold">Pts</li>
+          </ul>
         </form>
       </dialog>
     </main>
