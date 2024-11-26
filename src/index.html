@@ -789,13 +789,16 @@
         </form>
       </dialog>
       <dialog class="bg-slate-700 text-white" id="fav">
-        <form class="mb-1 ml-1 grid grid-cols-3 gap-x-1.5" method="dialog">
-          <h2 class="col-span-2 text-center text-lg font-medium">Favorites</h2>
+        <form
+          class="mb-1 ml-1 grid grid-cols-[1fr_1fr_1fr_max-content] gap-x-1.5"
+          method="dialog"
+        >
+          <h2 class="col-span-3 text-center text-lg font-medium">Favorites</h2>
           <menu class="flex gap-x-0.5">
             <li>
               <button
                 id="favDiagTrashBtn"
-                class="group bg-blue-300 px-1 hover:bg-red-300"
+                class="group bg-blue-200 px-1 hover:bg-red-300"
                 type="button"
               >
                 🗑
@@ -813,9 +816,10 @@
           <h3 class="text-center font-medium">Drivers</h3>
           <h3 class="text-center font-medium">Constructors</h3>
           <h3 class="text-center font-medium">Circuits</h3>
-          <ul id="favDiagDrivers"></ul>
-          <ul id="favDiagConstructors"></ul>
-          <ul id="favDiagCircuits"></ul>
+          <div></div>
+          <ul class="max-h-80 overflow-y-scroll" id="favDiagDrivers"></ul>
+          <ul class="max-h-80 overflow-y-scroll" id="favDiagConstructors"></ul>
+          <ul class="max-h-80 overflow-y-scroll" id="favDiagCircuits"></ul>
         </form>
       </dialog>
     </main>
