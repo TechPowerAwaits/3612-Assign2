@@ -412,6 +412,18 @@ document.addEventListener("DOMContentLoaded", () => {
               F1.data.driver._id,
               JSON.stringify(F1.data.driver._data),
             );
+
+            if (targetDriver.fav) {
+              F1.notification.insert(
+                "Driver Added",
+                `${targetDriver.forename} ${targetDriver.surname} has been added to favorites.`,
+              );
+            } else {
+              F1.notification.insert(
+                "Driver Removed",
+                `${targetDriver.forename} ${targetDriver.surname} has been removed from favorites.`,
+              );
+            }
           }
         },
 
@@ -491,6 +503,18 @@ document.addEventListener("DOMContentLoaded", () => {
               F1.data.constructor._id,
               JSON.stringify(F1.data.constructor._data),
             );
+
+            if (targetConstructor.fav) {
+              F1.notification.insert(
+                "Constructor Added",
+                `${targetConstructor.name} has been added to favorites.`,
+              );
+            } else {
+              F1.notification.insert(
+                "Constructor Removed",
+                `${targetConstructor.name} has been removed from favorites.`,
+              );
+            }
           }
         },
 
