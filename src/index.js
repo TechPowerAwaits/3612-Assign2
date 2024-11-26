@@ -683,7 +683,7 @@ document.addEventListener("DOMContentLoaded", () => {
   F1.views.favButton.addEventListener("click", () => {
     const dialog = document.querySelector("#fav");
     prepFavDialog(dialog);
-    dialog.show();
+    dialog.showModal();
   });
 
   /*
