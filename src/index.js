@@ -1194,7 +1194,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .querySelectorAll(".upArrow, .downArrow")
       .forEach((arrow) => F1.state.hide(arrow));
 
-    F1.state.hide(
+    F1.state.show(
       sortColElm.querySelector(descend ? ".upArrow" : ".downArrow"),
     );
   }
