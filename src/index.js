@@ -265,8 +265,8 @@ document.addEventListener("DOMContentLoaded", () => {
         await Promise.all([
           F1.data.driver.prepData(domain),
           F1.data.constructor.prepData(domain),
+          F1.data.circuit.prepData(domain),
         ]);
-        F1.data.circuit.prepFavs();
 
         F1.state.hideLoading();
         F1.state.show(F1.views.home);
@@ -542,17 +542,29 @@ document.addEventListener("DOMContentLoaded", () => {
        * Purpose: To manage circuit data across all seasons.
        */
       circuit: {
-        _favs: [],
-        _id: "circuitFavs",
+        _data: [],
+        _id: "circuits",
 
         /*
-         * Purpose: Restores any last saved favorite circuits.
+         * Purpose: Acquires data on all circuits across all seasons.
          */
-        prepFavs: function () {
-          let storedData = localStorage.getItem(F1.data.circuit._id);
+        prepData: async function (domain = F1.data.default_domain) {
+          let data = localStorage.getItem(F1.data.circuit._id);
 
-          if (storedData) {
-            F1.data.circuit._favs = JSON.parse(storedData);
+          if (!data) {
+            try {
+              data = await F1.data.checkedFetch(`${domain}/circuits.php`);
+              F1.data.throwOnDataError(data);
+              localStorage.setItem(F1.data.circuit._id, JSON.stringify(data));
+            } catch (error) {
+              F1.notification.insert("Error", error.message);
+            }
+          } else {
+            data = JSON.parse(data);
+          }
+
+          if (data) {
+            F1.data.circuit._data = data;
           }
         },
 
@@ -560,38 +572,59 @@ document.addEventListener("DOMContentLoaded", () => {
          * Returns: If the given circuit is a user favorite.
          */
         isFav: function (circuitID) {
-          return F1.data.circuit._favs.includes(circuitID);
+          const targetCircuit = F1.data.circuit._data.find(
+            (circuit) => circuit.circuitId == circuitID,
+          );
+
+          return targetCircuit && targetCircuit.fav;
         },
 
         /*
          * Purpose: To toggle whether the given circuit is a user favorite or not.
-         *
-         * Details: It is assumed that there are no duplicates in the array. It is
-         * also assumed that any ID given is valid.
          */
         toggleFav: function (circuitID) {
-          const origFavs = F1.data.circuit._favs;
-          const newFavs = [];
-          newFavs.length = origFavs.length;
+          const targetCircuit = F1.data.circuit._data.find(
+            (circuit) => circuit.circuitId == circuitID,
+          );
 
-          let favFound = false;
+          if (targetCircuit) {
+            targetCircuit.fav = !targetCircuit.fav;
+            localStorage.setItem(
+              F1.data.circuit._id,
+              JSON.stringify(F1.data.circuit._data),
+            );
 
-          for (let i = 0, j = 0; i < origFavs.length; i++) {
-            if (origFavs[i] != circuitID) {
-              newFavs[j] = origFavs[i];
-              j++;
+            if (targetCircuit.fav) {
+              F1.notification.insert(
+                "Circuit Added",
+                `${targetCircuit.name} has been added to favorites.`,
+              );
             } else {
-              newFavs.length -= 1;
-              favFound = true;
+              F1.notification.insert(
+                "Circuit Removed",
+                `${targetCircuit.name} has been removed from favorites.`,
+              );
             }
           }
+        },
 
-          if (!favFound) {
-            newFavs.push(circuitID);
-          }
+        /*
+         * Return: A constructor corresponding to the given driverID or undefined
+         * if the constructor is not found.
+         */
+        get: function (constructorID) {
+          return F1.data.constructor._data.find(
+            (constructor) => constructor.constructorId == constructorID,
+          );
+        },
 
-          F1.data.circuit._favs = newFavs;
-          localStorage.setItem(F1.data.circuit._id, JSON.stringify(newFavs));
+        /*
+         * Returns: An array of Constructor objects that have been favorited.
+         */
+        getFavs: function () {
+          return F1.data.constructor._data.filter(
+            (constructor) => constructor.fav,
+          );
         },
       },
     },
