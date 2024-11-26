@@ -1188,15 +1188,24 @@ document.addEventListener("DOMContentLoaded", () => {
   /*
    * Purpose: Updates the arrows representing the sorting direction in the
    * given list.
+   *
+   * Details: The purpose of the invisible arrows is to take up space, so that
+   * while sorting, the column lengths don't change. Otherwise, entire tables
+   * could shift around as a result.
    */
   function updateSortArrow(list, sortColElm, descend) {
     list
       .querySelectorAll(".upArrow, .downArrow")
       .forEach((arrow) => F1.state.hide(arrow));
 
+    list
+      .querySelectorAll(".invisibleArrow")
+      .forEach((arrow) => F1.state.show(arrow));
+
     F1.state.show(
       sortColElm.querySelector(descend ? ".upArrow" : ".downArrow"),
     );
+    F1.state.hide(sortColElm.querySelector(".invisibleArrow"));
   }
 
   /*
