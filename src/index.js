@@ -507,8 +507,15 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   };
 
+  /*
+   * Purpose: Allows the user to get back to the home view by clicking on the
+   * logo.
+   */
   F1.views.logoButton.addEventListener("click", F1.state.switchToHome);
 
+  /*
+   * Purpose: Loads the Browse section with the races from the selected season.
+   */
   document.querySelector("#selSeason").addEventListener("change", (e) => {
     const seasonVal = e.target.value;
     if (seasonVal) {
@@ -521,12 +528,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  /*
+   * Purpose: To sort the Races Table whenever a sortable column is clicked on.
+   */
   F1.views.racesTable.addEventListener("click", (e) => {
     if (e.target.dataset.sort) {
       populateRaces(racesTable, F1.data.races.get(), e.target);
     }
   });
 
+  /*
+   * Purpose: To populate the Qualifying and Results Tables based on the selected
+   * race.
+   */
   F1.views.racesTable.addEventListener("click", (e) => {
     const raceID = e.target.dataset.raceID;
 
@@ -554,6 +568,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  /*
+   * Purpose: To sort the Qualifying Table based off of selected sortable column.
+   */
   F1.views.qualifyingTable.addEventListener("click", (e) => {
     if (e.target.dataset.sort) {
       populateQualifying(
@@ -565,6 +582,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  /*
+   * Purpose: To fill up the Driver Dialog with nice juicy information.
+   */
   F1.views.raceResults.addEventListener("click", (e) => {
     if (e.target.dataset.driverID) {
       const dialog = document.querySelector("#driver");
@@ -579,6 +599,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  /*
+   * Purpose: To sort the Results Table based off of selected sortable column.
+   */
   F1.views.resultsTable.addEventListener("click", (e) => {
     if (e.target.dataset.sort) {
       populateResults(
@@ -590,6 +613,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  /*
+   * Purpose: To fill up the Constructor Dialog with nice juicy information.
+   */
   F1.views.raceResults.addEventListener("click", (e) => {
     if (e.target.dataset.constructorID) {
       const dialog = document.querySelector("#constructor");
@@ -606,6 +632,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  /*
+   * Purpose: To fill up the Circuit Dialog with nice juicy information.
+   */
   document.querySelector("#circuitBtn").addEventListener("click", (e) => {
     if (e.currentTarget.dataset.circuitID) {
       const circuitData = F1.data.races
@@ -636,6 +665,10 @@ document.addEventListener("DOMContentLoaded", () => {
       resultsData,
     );
 
+    /*
+     * Purpose: Populates the results table within the dialog with the desired
+     * values.
+     */
     function populateDiagResults(list, data) {
       clearNonHeaderRows(list);
       data.forEach((result) => {
@@ -674,6 +707,10 @@ document.addEventListener("DOMContentLoaded", () => {
       driverResultsData,
     );
 
+    /*
+     * Purpose: Populates the results table within the dialog with the desired
+     * values.
+     */
     function populateDiagResults(list, data) {
       clearNonHeaderRows(list);
       data.forEach((result) => {
