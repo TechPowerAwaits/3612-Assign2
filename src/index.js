@@ -1385,8 +1385,12 @@ document.addEventListener("DOMContentLoaded", () => {
    * Returns: An array of the nodes created.
    */
   function appendDriverName(list, driver, ...classes) {
-    const driverFNameBtn = createTextButton(driver.forename);
-    const driverLNameBtn = createTextButton(driver.surname);
+    const driverFNameBtn = createTextButton(
+      `${driver.forename} ${F1.data.driver.isFav(driver.id) ? "🌟" : ""}`,
+    );
+    const driverLNameBtn = createTextButton(
+      `${driver.surname} ${F1.data.driver.isFav(driver.id) ? "🌟" : ""}`,
+    );
 
     driverFNameBtn.dataset.driverID = driver.id;
     driverLNameBtn.dataset.driverID = driver.id;
@@ -1406,7 +1410,9 @@ document.addEventListener("DOMContentLoaded", () => {
    * Returns: The created node that stores the constructor's name.
    */
   function appendConstructorName(list, constructor, ...classes) {
-    const constBtn = createTextButton(constructor.name);
+    const constBtn = createTextButton(
+      `${constructor.name} ${F1.data.constructor.isFav(constructor.id) ? "🌟" : ""}`,
+    );
     constBtn.dataset.constructorID = constructor.id;
     return appendNode(list, constBtn, ...classes);
   }
