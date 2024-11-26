@@ -266,7 +266,7 @@ document.addEventListener("DOMContentLoaded", () => {
           F1.data.driver.prepData(domain),
           F1.data.constructor.prepData(domain),
         ]);
-        F1.data.circuits.prepFavs();
+        F1.data.circuit.prepFavs();
 
         F1.state.hideLoading();
         F1.state.show(F1.views.home);
@@ -517,7 +517,7 @@ document.addEventListener("DOMContentLoaded", () => {
       /*
        * Purpose: To manage circuit data across all seasons.
        */
-      circuits: {
+      circuit: {
         _favs: [],
         _id: "circuitFavs",
 
@@ -525,10 +525,10 @@ document.addEventListener("DOMContentLoaded", () => {
          * Purpose: Restores any last saved favorite circuits.
          */
         prepFavs: function () {
-          let storedData = localStorage.getItem(F1.data.circuits._id);
+          let storedData = localStorage.getItem(F1.data.circuit._id);
 
           if (storedData) {
-            F1.data.circuits._favs = JSON.parse(storedData);
+            F1.data.circuit._favs = JSON.parse(storedData);
           }
         },
 
@@ -536,7 +536,7 @@ document.addEventListener("DOMContentLoaded", () => {
          * Returns: If the given circuit is a user favorite.
          */
         isFav: function (circuitID) {
-          return circuitID in F1.data.circuits._favs;
+          return circuitID in F1.data.circuit._favs;
         },
 
         /*
@@ -546,9 +546,9 @@ document.addEventListener("DOMContentLoaded", () => {
          * also assumed that any ID given is valid.
          */
         toggleFav: function (circuitID) {
-          const origFavs = F1.data.circuits._favs;
+          const origFavs = F1.data.circuit._favs;
           const newFavs = [];
-          newFavs.length = F1.data.circuits._fav.length;
+          newFavs.length = origFavs.length;
 
           let favFound = false;
 
@@ -557,6 +557,7 @@ document.addEventListener("DOMContentLoaded", () => {
               newFavs[j] = origFavs[i];
               j++;
             } else {
+              newFavs.length -= 1;
               favFound = true;
             }
           }
@@ -565,8 +566,8 @@ document.addEventListener("DOMContentLoaded", () => {
             newFavs.push(circuitID);
           }
 
-          F1.data.circuits._favs = newFavs;
-          localStorage.setItem(F1.data.driver._id, JSON.stringify(newFavs));
+          F1.data.circuit._favs = newFavs;
+          localStorage.setItem(F1.data.circuit._id, JSON.stringify(newFavs));
         },
       },
     },
@@ -744,9 +745,87 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   /*
+   * Purpose: To toggle the favorite state of the circuit being viewed in the
+   * dialog.
+   */
+  document
+    .querySelector("#circuitDiagFavBtn")
+    .addEventListener("click", (e) => {
+      const circuitID = e.currentTarget.dataset.id;
+
+      if (circuitID) {
+        F1.data.circuit.toggleFav(circuitID);
+        toggleFavBtnState(e.currentTarget);
+      }
+    });
+
+  /*
+   * Purpose: To toggle the favorite state of the driver being viewed in the
+   * dialog.
+   */
+  document.querySelector("#driverDiagFavBtn").addEventListener("click", (e) => {
+    const driverID = e.currentTarget.dataset.id;
+
+    if (driverID) {
+      F1.data.driver.toggleFav(driverID);
+      toggleFavBtnState(e.currentTarget);
+    }
+  });
+
+  /*
+   * Purpose: To toggle the favorite state of the constructor being viewed in the
+   * dialog.
+   */
+  document
+    .querySelector("#constructorDiagFavBtn")
+    .addEventListener("click", (e) => {
+      const constructorID = e.currentTarget.dataset.id;
+
+      if (constructorID) {
+        F1.data.constructor.toggleFav(constructorID);
+        toggleFavBtnState(e.currentTarget);
+      }
+    });
+
+  /*
+   * Purpose: To toggle the state of a favorite button in a dialog.
+   *
+   * Details: A favorite button has different indicators depending on
+   * whether clicking on it will remove or add a favorite.
+   */
+  function toggleFavBtnState(btnElm) {
+    if (!btnElm.dataset.favorite || btnElm.dataset.favorite == "0") {
+      btnElm.dataset.favorite = "1";
+    } else {
+      btnElm.dataset.favorite = "0";
+    }
+  }
+
+  /*
+   * Purpose: To set the state of a favorite button based on whether something
+   * is already favorited or not.
+   */
+  function setFavBtnState(btnElm, isFav) {
+    if (isFav) {
+      btnElm.dataset.favorite = "1";
+    } else {
+      btnElm.dataset.favorite = "0";
+    }
+  }
+
+  /*
    * Purpose: Preps the constructor dialog with the provided data.
    */
   function prepConstructorDialog(dialog, constructorData, resultsData) {
+    const favBtn = dialog.querySelector("#constructorDiagFavBtn");
+    setFavBtnState(
+      favBtn,
+      F1.data.constructor.isFav(constructorData.constructorId),
+    );
+    favBtn.dataset.id = constructorData.constructorId;
+
+    dialog.querySelector("#constructorDiagFavBtn").dataset.id =
+      constructorData.constructorId;
     dialog.querySelector("#constructorDiagName").textContent =
       constructorData.name;
     dialog.querySelector("#constructorDiagNationality").textContent =
@@ -780,6 +859,10 @@ document.addEventListener("DOMContentLoaded", () => {
    * Purpose: Preps the driver dialog with the provided data.
    */
   function prepDriverDialog(dialog, driverData, driverResultsData) {
+    const favBtn = dialog.querySelector("#driverDiagFavBtn");
+    setFavBtnState(favBtn, F1.data.driver.isFav(driverData.driverId));
+    favBtn.dataset.id = driverData.driverId;
+
     dialog.querySelector("#driverDiagName").textContent =
       `${driverData.forename} ${driverData.surname}`;
     dialog.querySelector("#driverDiagNationality").textContent =
@@ -821,6 +904,10 @@ document.addEventListener("DOMContentLoaded", () => {
    * Purpose: Preps the circuit dialog with the provided data.
    */
   function prepCircuitDialog(dialog, circuitData) {
+    const favBtn = dialog.querySelector("#circuitDiagFavBtn");
+    setFavBtnState(favBtn, F1.data.circuit.isFav(circuitData.id));
+    favBtn.dataset.id = circuitData.id;
+
     dialog.querySelector("#circuitDiagName").textContent = circuitData.name;
     dialog.querySelector("#circuitDiagLocation").textContent =
       circuitData.location;
