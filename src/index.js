@@ -203,7 +203,9 @@ document.addEventListener("DOMContentLoaded", () => {
        * Purpose: To display the loading screen.
        */
       showLoading: function () {
-        F1.views.logoButton.setAttribute("disabled", "");
+        document
+          .querySelectorAll(":enabled")
+          .forEach((elm) => elm.setAttribute("disabled", ""));
         F1.state.hide(F1.views.browse);
         F1.state.hide(F1.views.home);
         F1.notification.clearAll();
@@ -215,7 +217,9 @@ document.addEventListener("DOMContentLoaded", () => {
        */
       hideLoading: function () {
         F1.state.hide(F1.views.mainLoading);
-        F1.views.logoButton.removeAttribute("disabled");
+        document
+          .querySelectorAll(":disabled")
+          .forEach((elm) => elm.removeAttribute("disabled"));
       },
     },
 
