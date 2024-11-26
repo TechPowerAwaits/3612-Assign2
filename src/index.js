@@ -432,8 +432,8 @@ document.addEventListener("DOMContentLoaded", () => {
         },
 
         /*
-         * Return: A driver corresponding to the given driverID or undefined if
-         * the driver is not found.
+         * Return: A driver corresponding to the given ID or undefined
+         * if not found.
          */
         get: function (driverID) {
           return F1.data.driver._data.find(
@@ -523,8 +523,8 @@ document.addEventListener("DOMContentLoaded", () => {
         },
 
         /*
-         * Return: A constructor corresponding to the given driverID or undefined
-         * if the constructor is not found.
+         * Return: A constructor corresponding to the given ID or undefined
+         * if not found.
          */
         get: function (constructorID) {
           return F1.data.constructor._data.find(
@@ -613,22 +613,20 @@ document.addEventListener("DOMContentLoaded", () => {
         },
 
         /*
-         * Return: A constructor corresponding to the given driverID or undefined
-         * if the constructor is not found.
+         * Return: A circuit corresponding to the given ID or undefined
+         * if not found.
          */
-        get: function (constructorID) {
-          return F1.data.constructor._data.find(
-            (constructor) => constructor.constructorId == constructorID,
+        get: function (circuitID) {
+          return F1.data.circuit._data.find(
+            (circuit) => circuit.circuitId == circuitID,
           );
         },
 
         /*
-         * Returns: An array of Constructor objects that have been favorited.
+         * Returns: An array of Circuit objects that have been favorited.
          */
         getFavs: function () {
-          return F1.data.constructor._data.filter(
-            (constructor) => constructor.fav,
-          );
+          return F1.data.circuit._data.filter((circuit) => circuit.fav);
         },
       },
     },
@@ -637,6 +635,12 @@ document.addEventListener("DOMContentLoaded", () => {
     views: {
       /* Purpose: To store a reference to the logo's button in the header. */
       logoButton: document.querySelector("#logoButton"),
+
+      /* Purpose: To store a reference to the home button in the header. */
+      homeButton: document.querySelector("#homeButton"),
+
+      /* Purpose: To store a reference to the favorite button in the header. */
+      favButton: document.querySelector("#favButton"),
 
       /* Purpose: To store the main loading view. */
       mainLoading: document.querySelector("#mainLoading"),
@@ -669,6 +673,18 @@ document.addEventListener("DOMContentLoaded", () => {
    * logo.
    */
   F1.views.logoButton.addEventListener("click", F1.state.switchToHome);
+
+  /*
+   * Purpose: Allows the user to get back to the home view by clicking on the
+   * home button.
+   */
+  F1.views.homeButton.addEventListener("click", F1.state.switchToHome);
+
+  F1.views.favButton.addEventListener("click", () => {
+    const dialog = document.querySelector("#fav");
+    prepFavDialog(dialog);
+    dialog.show();
+  });
 
   /*
    * Purpose: Loads the Browse section with the races from the selected season.
@@ -886,6 +902,7 @@ document.addEventListener("DOMContentLoaded", () => {
         driversList,
         `${driver.forename} ${driver.surname}`,
         "text-center",
+        "font-light",
       );
     });
 
@@ -893,14 +910,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const constructorList = dialog.querySelector("#favDiagConstructors");
     constructorList.innerHTML = "";
     favConstructors.forEach((constructor) => {
-      appendText(constructorList, constructor.name, "text-center");
+      appendText(
+        constructorList,
+        constructor.name,
+        "text-center",
+        "font-light",
+      );
     });
 
     const favCircuits = F1.data.circuit.getFavs();
     const circuitList = dialog.querySelector("#favDiagCircuits");
     circuitList.innerHTML = "";
     favCircuits.forEach((circuit) => {
-      appendText(circuitList, circuit.name, "text-center");
+      appendText(circuitList, circuit.name, "text-center", "font-light");
     });
   }
 
