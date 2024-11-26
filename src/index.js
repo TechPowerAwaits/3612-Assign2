@@ -1396,6 +1396,8 @@ document.addEventListener("DOMContentLoaded", () => {
    * Details: Classes to add to the generated nodes can be provided at the end of
    * the parameter list.
    *
+   * It will add a star if it detects the driver is a user's favorite.
+   *
    * Returns: An array of the nodes created.
    */
   function appendDriverName(list, driver, ...classes) {
@@ -1420,6 +1422,8 @@ document.addEventListener("DOMContentLoaded", () => {
    *
    * Details: Classes to add to the generated node can be provided at the end of
    * the parameter list.
+   *
+   * It will add a star if it detects the driver is a user's favorite.
    *
    * Returns: The created node that stores the constructor's name.
    */
