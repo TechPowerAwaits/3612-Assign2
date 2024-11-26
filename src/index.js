@@ -190,18 +190,32 @@ document.addEventListener("DOMContentLoaded", () => {
         const maxTimeToLoad = 3000;
         const timeToLoad = maxTimeToLoad - Math.random() * 2000;
 
+        F1.state.showLoading();
+        resetBrowseView();
+
+        setTimeout(() => {
+          F1.state.hideLoading();
+          F1.state.show(F1.views.home);
+        }, timeToLoad);
+      },
+
+      /*
+       * Purpose: To display the loading screen.
+       */
+      showLoading: function () {
         F1.views.logoButton.setAttribute("disabled", "");
         F1.state.hide(F1.views.browse);
         F1.state.hide(F1.views.home);
         F1.notification.clearAll();
         F1.state.show(F1.views.mainLoading);
-        resetBrowseView();
+      },
 
-        setTimeout(() => {
-          F1.state.hide(F1.views.mainLoading);
-          F1.state.show(F1.views.home);
-          F1.views.logoButton.removeAttribute("disabled");
-        }, timeToLoad);
+      /*
+       * Purpose: To hide the loading screen.
+       */
+      hideLoading: function () {
+        F1.state.hide(F1.views.mainLoading);
+        F1.views.logoButton.removeAttribute("disabled");
       },
     },
 
@@ -213,6 +227,50 @@ document.addEventListener("DOMContentLoaded", () => {
        * Purpose: Provides the default domain that contains the desired API.
        */
       default_domain: "https://www.randyconnolly.com/funwebdev/3rd/api/f1",
+
+      /*
+       * Purpose: Fetch data, but error out if response is not okay.
+       */
+      checkedFetch: async function (url) {
+        const response = await fetch(url);
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error(`Request rejected. Status Code ${response.status}.`);
+        }
+      },
+
+      /*
+       * Purpose: Throws an error if the given data expresses an error.
+       */
+      throwOnDataError: function (data) {
+        data.forEach((item) => {
+          if (item.error) {
+            throw new Error(item.error.message);
+          }
+        });
+      },
+
+      /*
+       * Purpose: Acquires data across seasons.
+       *
+       * Details: This data includes information on drivers and constructors.
+       *
+       * A loading animation will be displayed while work is undertaken.
+       * It will go to the home view after work is completed.
+       */
+      prepData: async function (domain = F1.data.default_domain) {
+        F1.state.showLoading();
+
+        await Promise.all([
+          F1.data.driver.prepData(domain),
+          F1.data.constructor.prepData(domain),
+        ]);
+        F1.data.circuits.prepFavs();
+
+        F1.state.hideLoading();
+        F1.state.show(F1.views.home);
+      },
 
       /*
        * Purpose: Contains functionality related to race data for a given season.
@@ -296,44 +354,6 @@ document.addEventListener("DOMContentLoaded", () => {
         getResults: function () {
           return F1.data.races._current[F1.data.races._resultsIdx];
         },
-      },
-
-      checkedFetch: async function (url) {
-        const response = await fetch(url);
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error(`Request rejected. Status Code ${response.status}.`);
-        }
-      },
-
-      throwOnDataError: function (data) {
-        data.forEach((item) => {
-          if (item.error) {
-            throw new Error(item.error.message);
-          }
-        });
-      },
-
-      /*
-       * Purpose: Acquires data across seasons.
-       *
-       * Details: This data includes information on drivers and constructors.
-       *
-       * A loading animation will be displayed while work is undertaken.
-       * It will go to the home view after work is completed.
-       */
-      prepData: async function (domain = F1.data.default_domain) {
-        F1.state.show(F1.views.mainLoading);
-
-        await Promise.all([
-          F1.data.driver.prepData(domain),
-          F1.data.constructor.prepData(domain),
-        ]);
-        F1.data.circuits.prepFavs();
-
-        F1.state.hide(F1.views.mainLoading);
-        F1.state.show(F1.views.home);
       },
 
       /*
