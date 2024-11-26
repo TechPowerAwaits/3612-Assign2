@@ -1192,6 +1192,8 @@ document.addEventListener("DOMContentLoaded", () => {
    * Details: The purpose of the invisible arrows is to take up space, so that
    * while sorting, the column lengths don't change. Otherwise, entire tables
    * could shift around as a result.
+   *
+   * sortColElm is the column to sort by.
    */
   function updateSortArrow(list, sortColElm, descend) {
     list
@@ -1249,6 +1251,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /*
    * Purpose: Populates all the race information into the races table.
+   *
+   * Details: sortColElm is a header from the list to sort by. It needs to have
+   * a data-sort attribute in order to be able to properly sort. No checks are
+   * done to see if this value is valid.
    */
   function populateRaces(list, data, sortColElm) {
     const sortCol = sortColElm.dataset.sort;
@@ -1272,6 +1278,10 @@ document.addEventListener("DOMContentLoaded", () => {
   /*
    * Purpose: Populates all the qualifying information for the given race into the qualifying
    * table.
+   *
+   * Details: sortColElm is a header from the list to sort by. It needs to have
+   * a data-sort attribute in order to be able to properly sort. No checks are
+   * done to see if this value is valid.
    */
   function populateQualifying(list, data, raceID, sortColElm) {
     const sortCol = sortColElm.dataset.sort;
@@ -1297,6 +1307,10 @@ document.addEventListener("DOMContentLoaded", () => {
   /*
    * Purpose: Populates all the results information for the given race into the results
    * table.
+   *
+   * Details: sortColElm is a header from the list to sort by. It needs to have
+   * a data-sort attribute in order to be able to properly sort. No checks are
+   * done to see if this value is valid.
    */
   function populateResults(list, data, raceID, sortColElm) {
     const sortCol = sortColElm.dataset.sort;
