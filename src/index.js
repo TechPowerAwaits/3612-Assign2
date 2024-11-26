@@ -192,6 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         F1.views.logoButton.setAttribute("disabled", "");
         F1.state.hide(F1.views.browse);
+        F1.state.hide(F1.views.home);
         F1.notification.clearAll();
         F1.state.show(F1.views.mainLoading);
         resetBrowseView();
@@ -319,11 +320,20 @@ document.addEventListener("DOMContentLoaded", () => {
        *
        * Details: This data includes information on drivers and constructors.
        *
-       * All the data is acquired asynchronously.
+       * A loading animation will be displayed while work is undertaken.
+       * It will go to the home view after work is completed.
        */
-      prepData: function (domain = F1.data.default_domain) {
-        F1.data.driver.prepData(domain);
-        F1.data.constructor.prepData(domain);
+      prepData: async function (domain = F1.data.default_domain) {
+        F1.state.show(F1.views.mainLoading);
+
+        await Promise.all([
+          F1.data.driver.prepData(domain),
+          F1.data.constructor.prepData(domain),
+        ]);
+        F1.data.circuits.prepFavs();
+
+        F1.state.hide(F1.views.mainLoading);
+        F1.state.show(F1.views.home);
       },
 
       /*
@@ -378,7 +388,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
           if (targetDriver) {
             targetDriver.fav = !targetDriver.fav;
-            localStorage.setItem(F1.data.driver._id, JSON.stringify(data));
+            localStorage.setItem(
+              F1.data.driver._id,
+              JSON.stringify(F1.data.driver._data),
+            );
           }
         },
 
@@ -400,6 +413,9 @@ document.addEventListener("DOMContentLoaded", () => {
         },
       },
 
+      /*
+       * Purpose: To manage constructor data across all seasons.
+       */
       constructor: {
         _data: [],
         _id: "constructors",
@@ -451,7 +467,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
           if (targetConstructor) {
             targetConstructor.fav = !targetConstructor.fav;
-            localStorage.setItem(F1.data.constructor._id, JSON.stringify(data));
+            localStorage.setItem(
+              F1.data.constructor._id,
+              JSON.stringify(F1.data.constructor._data),
+            );
           }
         },
 
@@ -472,6 +491,62 @@ document.addEventListener("DOMContentLoaded", () => {
           return F1.data.constructor._data.filter(
             (constructor) => constructor.fav,
           );
+        },
+      },
+
+      /*
+       * Purpose: To manage circuit data across all seasons.
+       */
+      circuits: {
+        _favs: [],
+        _id: "circuitFavs",
+
+        /*
+         * Purpose: Restores any last saved favorite circuits.
+         */
+        prepFavs: function () {
+          let storedData = localStorage.getItem(F1.data.circuits._id);
+
+          if (storedData) {
+            F1.data.circuits._favs = JSON.parse(storedData);
+          }
+        },
+
+        /*
+         * Returns: If the given circuit is a user favorite.
+         */
+        isFav: function (circuitID) {
+          return circuitID in F1.data.circuits._favs;
+        },
+
+        /*
+         * Purpose: To toggle whether the given circuit is a user favorite or not.
+         *
+         * Details: It is assumed that there are no duplicates in the array. It is
+         * also assumed that any ID given is valid.
+         */
+        toggleFav: function (circuitID) {
+          const origFavs = F1.data.circuits._favs;
+          const newFavs = [];
+          newFavs.length = F1.data.circuits._fav.length;
+
+          let favFound = false;
+
+          for (let i = 0, j = 0; i < origFavs.length; i++) {
+            if (origFavs[i] != circuitID) {
+              newFavs[j] = origFavs[i];
+              j++;
+            } else {
+              favFound = true;
+            }
+          }
+
+          if (!favFound) {
+            newFavs.push(circuitID);
+          }
+
+          F1.data.circuits._favs = newFavs;
+          localStorage.setItem(F1.data.driver._id, JSON.stringify(newFavs));
         },
       },
     },
@@ -1102,5 +1177,4 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   F1.data.prepData();
-  F1.state.switchToHome();
 });
