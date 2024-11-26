@@ -509,9 +509,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   F1.views.logoButton.addEventListener("click", F1.state.switchToHome);
 
-  const selSeason = document.querySelector("#selSeason");
-  selSeason.addEventListener("change", () => {
-    const seasonVal = selSeason.value;
+  document.querySelector("#selSeason").addEventListener("change", (e) => {
+    const seasonVal = e.target.value;
     if (seasonVal) {
       F1.data.races.handle(seasonVal);
     } else {
