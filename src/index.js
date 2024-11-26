@@ -536,7 +536,7 @@ document.addEventListener("DOMContentLoaded", () => {
          * Returns: If the given circuit is a user favorite.
          */
         isFav: function (circuitID) {
-          return circuitID in F1.data.circuit._favs;
+          return F1.data.circuit._favs.includes(circuitID);
         },
 
         /*
@@ -751,7 +751,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document
     .querySelector("#circuitDiagFavBtn")
     .addEventListener("click", (e) => {
-      const circuitID = e.currentTarget.dataset.id;
+      const circuitID = Number.parseInt(e.currentTarget.dataset.id);
 
       if (circuitID) {
         F1.data.circuit.toggleFav(circuitID);
