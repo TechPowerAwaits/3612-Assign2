@@ -400,8 +400,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         /*
          * Purpose: To toggle whether the given driver is a user favorite or not.
-         *
-         * Returns: True if the driver has been added to favorites. False otherwise.
          */
         toggleFav: function (driverID) {
           const targetDriver = F1.data.driver._data.find(
@@ -414,11 +412,7 @@ document.addEventListener("DOMContentLoaded", () => {
               F1.data.driver._id,
               JSON.stringify(F1.data.driver._data),
             );
-
-            return targetDriver.fav;
           }
-
-          return false;
         },
 
         /*
@@ -485,8 +479,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         /*
          * Purpose: To toggle whether the given constructor is a user favorite or not.
-         *
-         * Returns: True if the constructor has been added to favorites. False otherwise.
          */
         toggleFav: function (constructorID) {
           const targetConstructor = F1.data.constructor._data.find(
@@ -499,11 +491,7 @@ document.addEventListener("DOMContentLoaded", () => {
               F1.data.constructor._id,
               JSON.stringify(F1.data.constructor._data),
             );
-
-            return targetConstructor.fav;
           }
-
-          return false;
         },
 
         /*
@@ -556,8 +544,6 @@ document.addEventListener("DOMContentLoaded", () => {
          *
          * Details: It is assumed that there are no duplicates in the array. It is
          * also assumed that any ID given is valid.
-         *
-         * Returns: True if the circuit has been added to favorites. False otherwise.
          */
         toggleFav: function (circuitID) {
           const origFavs = F1.data.circuit._favs;
@@ -582,15 +568,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
           F1.data.circuit._favs = newFavs;
           localStorage.setItem(F1.data.circuit._id, JSON.stringify(newFavs));
-
-          return !favFound;
-        },
-
-        /*
-         * Returns: An array contains the circuit IDs of all favorited circuits.
-         */
-        getFavs: function () {
-          return F1.data.circuit._favs;
         },
       },
     },
