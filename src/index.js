@@ -871,6 +871,36 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /*
+   * Purpose: Preps the favorites dialog with the appropriate data.
+   */
+  function prepFavDialog(dialog) {
+    const favDrivers = F1.data.driver.getFavs();
+    const driversList = dialog.querySelector("#favDiagDrivers");
+    driversList.innerHTML = "";
+    favDrivers.forEach((driver) => {
+      appendText(
+        driversList,
+        `${driver.forename} ${driver.surname}`,
+        "text-center",
+      );
+    });
+
+    const favConstructors = F1.data.constructor.getFavs();
+    const constructorList = dialog.querySelector("#favDiagConstructors");
+    constructorList.innerHTML = "";
+    favConstructors.forEach((constructor) => {
+      appendText(constructorList, constructor.name, "text-center");
+    });
+
+    const favCircuits = F1.data.circuit.getFavs();
+    const circuitList = dialog.querySelector("#favDiagCircuits");
+    circuitList.innerHTML = "";
+    favCircuits.forEach((circuit) => {
+      appendText(circuitList, circuit.name, "text-center");
+    });
+  }
+
+  /*
    * Purpose: Preps the constructor dialog with the provided data.
    */
   function prepConstructorDialog(dialog, constructorData, resultsData) {
