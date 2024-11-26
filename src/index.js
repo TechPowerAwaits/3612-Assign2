@@ -277,6 +277,15 @@ document.addEventListener("DOMContentLoaded", () => {
       },
 
       /*
+       * Purpose: Removes all saved favorites.
+       */
+      purgeFavs: function () {
+        F1.data.driver.purgeFavs();
+        F1.data.constructor.purgeFavs();
+        F1.data.circuit.purgeFavs();
+      },
+
+      /*
        * Purpose: Contains functionality related to race data for a given season.
        */
       races: {
@@ -447,6 +456,26 @@ document.addEventListener("DOMContentLoaded", () => {
         getFavs: function () {
           return F1.data.driver._data.filter((driver) => driver.fav);
         },
+
+        /*
+         * Purpose: Removes all saved drivers from favorites.
+         */
+        purgeFavs: function () {
+          const favs = F1.data.driver.getFavs();
+
+          favs.forEach((item) => {
+            item.fav = false;
+          });
+
+          localStorage.setItem(
+            F1.data.driver._id,
+            JSON.stringify(F1.data.driver._data),
+          );
+
+          F1.notification.insert(
+            `${favs.length} Driver(s) Removed from Favorites`,
+          );
+        },
       },
 
       /*
@@ -540,6 +569,26 @@ document.addEventListener("DOMContentLoaded", () => {
             (constructor) => constructor.fav,
           );
         },
+
+        /*
+         * Purpose: Removes all saved constructors from favorites.
+         */
+        purgeFavs: function () {
+          const favs = F1.data.constructor.getFavs();
+
+          favs.forEach((item) => {
+            item.fav = false;
+          });
+
+          localStorage.setItem(
+            F1.data.constructor._id,
+            JSON.stringify(F1.data.constructor._data),
+          );
+
+          F1.notification.insert(
+            `${favs.length} Constructor(s) Removed from Favorites`,
+          );
+        },
       },
 
       /*
@@ -628,6 +677,26 @@ document.addEventListener("DOMContentLoaded", () => {
         getFavs: function () {
           return F1.data.circuit._data.filter((circuit) => circuit.fav);
         },
+
+        /*
+         * Purpose: Removes all saved circuits from favorites.
+         */
+        purgeFavs: function () {
+          const favs = F1.data.circuit.getFavs();
+
+          favs.forEach((item) => {
+            item.fav = false;
+          });
+
+          localStorage.setItem(
+            F1.data.circuit._id,
+            JSON.stringify(F1.data.circuit._data),
+          );
+
+          F1.notification.insert(
+            `${favs.length} Circuit(s) Removed from Favorites`,
+          );
+        },
       },
     },
 
@@ -680,11 +749,21 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   F1.views.homeButton.addEventListener("click", F1.state.switchToHome);
 
+  /*
+   * Purpose: To display the favorites dialog in all its glory.
+   */
   F1.views.favButton.addEventListener("click", () => {
     const dialog = document.querySelector("#fav");
     prepFavDialog(dialog);
     dialog.showModal();
   });
+
+  /*
+   * Purpose: To delete all favorites when button is pressed.
+   */
+  document
+    .querySelector("#favDiagTrashBtn")
+    .addEventListener("click", F1.data.purgeFavs);
 
   /*
    * Purpose: Loads the Browse section with the races from the selected season.
